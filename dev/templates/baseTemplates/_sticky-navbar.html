@@ -1,0 +1,101 @@
+<nav class="navbar sticky-top navbar-light p-0" id="mainNavbar">
+    <!-- Основной контент -->
+    <div class="container py-3 position-relative">
+        <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+            <a class="nav-link active ps-2 pe-3 custom-hover" href="#pizzas">Пиццы</a>
+            <a class="nav-link active pe-3 custom-hover" href="#drinks">Напитки</a>
+            <a class="nav-link active pe-3 custom-hover" href="#desserts">Десерты</a>
+        </div>
+    </div>
+
+    <!-- Размытый фон (изначально скрыт) -->
+    <div class="blur-background w-100 h-100 position-absolute top-0 start-0"></div>
+</nav>
+
+<style>
+    /* Стили для размытого фона */
+    .blur-background {
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        z-index: 0;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        pointer-events: none; /* Позволяет кликам проходить сквозь фон */
+    }
+
+    /* Класс, который добавляется при прилипании */
+    .navbar-stuck .blur-background {
+        opacity: 1;
+    }
+
+    /* Стили для ссылок */
+    .nav-link.custom-hover {
+        position: relative;
+        color: #212529 !important;
+        z-index: 1; /* Чтобы ссылки были поверх фона */
+        transition: color 0.3s ease;
+    }
+
+    .nav-link.custom-hover:hover {
+        color: #0d6efd !important;
+    }
+
+    .nav-link.custom-hover::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0.5rem;
+        right: 0.5rem;
+        height: 2px;
+        background: #0d6efd;
+        transform: scaleX(0);
+        transform-origin: center;
+        transition: transform 0.3s ease;
+    }
+
+    .nav-link.custom-hover:hover::after {
+        transform: scaleX(1);
+    }
+</style>
+
+<script>
+    // Функция для отслеживания прилипания навбара
+    function setupNavbarObserver() {
+        const navbar = document.getElementById('mainNavbar');
+        const navbarHeight = navbar.offsetHeight;
+
+        // Создаем элемент-маркер для отслеживания
+        const marker = document.createElement('div');
+        marker.style.position = 'absolute';
+        marker.style.top = `${navbarHeight}px`;
+        marker.style.width = '100%';
+        marker.style.height = '1px';
+        document.body.appendChild(marker);
+
+        const observer = new IntersectionObserver(
+            (entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        navbar.classList.remove('navbar-stuck');
+                    } else {
+                        navbar.classList.add('navbar-stuck');
+                    }
+                });
+            },
+            { rootMargin: `-${navbarHeight}px 0px 0px 0px` }
+        );
+
+        observer.observe(marker);
+
+        // Удаляем маркер при размонтировании
+        return () => {
+            observer.unobserve(marker);
+            document.body.removeChild(marker);
+        };
+    }
+
+    // Инициализация при загрузке и при изменении размера окна
+    window.addEventListener('load', setupNavbarObserver);
+    window.addEventListener('resize', setupNavbarObserver);
+</script>
