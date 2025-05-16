@@ -15,3 +15,5 @@ class Pizza(db.Model):
         backref='pizzas',
         lazy='joined'  # Жадная загрузка по умолчанию
     )
+
+

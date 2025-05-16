@@ -1,27 +1,27 @@
 <header class="p-3 mb-3 border-bottom">
     <div class="container">
         <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
-
             <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
-                <li><a href="#" class="nav-link px-2 link-secondary">Главная</a></li>
+                <li><a href="/" class="nav-link px-2 link-secondary">Главная</a></li>
                 <li><a href="#" class="nav-link px-2 link-dark">О нас</a></li>
                 <li><a href="#" class="nav-link px-2 link-dark">Контакты</a></li>
             </ul>
 
-            <div class="dropdown text-end ">
-                <a href="#" class="d-block link-dark text-decoration-none dropdown-toggle" id="dropdownUser1"
-                   data-bs-toggle="dropdown" aria-expanded="false">
-                    <img src="https://github.com/mdo.png" alt="mdo" width="32" height="32" class="rounded-circle">
-                </a>
-                <ul class="dropdown-menu text-small" aria-labelledby="dropdownUser1">
-                    <li><a class="dropdown-item" href="#">Профиль</a></li>
-                    <li><a class="dropdown-item" href="#">Заказы</a></li>
-                    <li><a class="dropdown-item" href="#">Корзина</a></li>
-                    <li>
-                        <hr class="dropdown-divider">
-                    </li>
-                    <li><a class="dropdown-item" href="#">Выйти</a></li>
-                </ul>
+            <!-- Кнопка входа/профиля справа -->
+            <div class="text-end">
+                {% if current_user.is_authenticated %}
+                    {% if current_user.is_client() %}
+                        <a href="/orders" class="btn btn-outline-secondary me-2">Мои заказы</a>
+                        <a href="/cart" class="btn btn-outline-secondary me-2">Корзина</a>
+                        <a href="/profile" class="btn btn-outline-secondary me-2">Профиль</a>
+                        <a href="/logout" class="btn btn-outline-danger">Выйти</a>
+                    {% elif current_user.is_cook() %}
+                        <a href="/orders" class="btn btn-outline-secondary me-2">Заказы</a>
+                        <a href="/logout" class="btn btn-outline-danger">Выйти</a>
+                    {% endif %}
+                {% else %}
+                    <a href="/auth" class="btn btn-outline-primary me-2">Войти</a>
+                {% endif %}
             </div>
         </div>
     </div>

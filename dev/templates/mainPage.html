@@ -1,453 +1,508 @@
-{% extends 'baseTemplates/basePage.html' %}
-{% block title %}Главная страница{% endblock %}
-{% block content %}
-<!-- Секция пицц -->
-<section id="pizzas" class="pizza-section">
-    <h2 class="section-title">Пиццы</h2>
-    <div class="good-grid">
-        {% for pizza in pizzas %}
-        <div class="good-card">
-            <div class="good-image-wrapper">
-                <div class="good-image-container">
-                    <img src="{{ url_for('static', filename='img/' + pizza.image_path) }}"
-                         alt="{{ pizza.name }}" class="good-image">
-                </div>
-            </div>
-            <div class="good-details">
-                <h2 class="good-title">{{ pizza.name }}</h2>
-                <div class="good-ingredients">
-                    <p>
-                        {% for ingredient in pizza.ingredients %}
-                        {{ ingredient.name }}{% if not loop.last %}, {% endif %}
-                        {% endfor %}
-                    </p>
-                </div>
-                <div class="good-footer">
-                    <span class="good-price">от {{ pizza.price }} ₽</span>
-                    <button class="add-to-cart"
-                            data-name="{{ pizza.name }}"
-                            data-base-price="{{ pizza.price }}"
-                            data-image="{{ url_for('static', filename='img/' + pizza.image_path) }}"
-                            data-ingredients="{% for ingredient in pizza.ingredients %}{{ ingredient.name }}{% if not loop.last %}, {% endif %}{% endfor %}">
-                        Выбрать
-                    </button>
-                </div>
-            </div>
-        </div>
-        {% endfor %}
-    </div>
-
-    <!-- Модальное окно для пиццы -->
-    <div id="pizzaModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <div class="modal-body">
-                <div class="pizza-image-container">
-                    <img id="modalPizzaImage" src="" alt="Пицца" class="pizza-image">
-                </div>
-                <div class="pizza-options">
-                    <h2 id="modalPizzaTitle"></h2>
-
-                    <div class="size-options">
-                        <h3>Размер</h3>
-                        <div class="size-buttons">
-                            <button class="size-btn active" data-size="25" data-price="699">25 см</button>
-                            <button class="size-btn" data-size="30" data-price="899">30 см</button>
-                            <button class="size-btn" data-size="35" data-price="1099">35 см</button>
-                        </div>
+    {% extends 'baseTemplates/basePage.html' %}
+    {% block title %}Главная страница{% endblock %}
+    {% block content %}
+    <!-- Секция пицц -->
+    <section id="pizzas" class="pizza-section">
+        <h2 class="section-title">Пиццы</h2>
+        <div class="good-grid">
+            {% for pizza in pizzas %}
+            <div class="good-card">
+                <div class="good-image-wrapper">
+                    <div class="good-image-container">
+                        <img src="{{ url_for('static', filename='img/' + pizza.image_path) }}"
+                             alt="{{ pizza.name }}" class="good-image">
                     </div>
-
-                    <div class="dough-options">
-                        <h3>Тесто</h3>
-                        <div class="dough-buttons">
-                            <button class="dough-btn active" data-dough="traditional">Традиционное</button>
-                            <button class="dough-btn" data-dough="thin">Тонкое</button>
-                        </div>
-                    </div>
-
-                    <div class="ingredients-options">
-                        <h3>Добавить по вкусу</h3>
-                        <div class="ingredients-grid">
-                            {% for ingredient in ingredients %}
-                            <div class="ingredient-card">
-                                <label class="ingredient-item">
-                                    <input type="checkbox" data-price="{{ingredient.price}}">
-                                    <img src="{{ url_for('static', filename='img/' + ingredient.image_path) }}"
-                                         alt="{{ingredient.name}}" class="ingredient-image">
-                                    <span>{{ingredient.name}}</span>
-                                    <span class="ingredient-price">{{ingredient.price}} ₽</span>
-                                </label>
-                            </div>
+                </div>
+                <div class="good-details">
+                    <h2 class="good-title">{{ pizza.name }}</h2>
+                    <div class="good-ingredients">
+                        <p>
+                            {% for ingredient in pizza.ingredients %}
+                            {{ ingredient.name }}{% if not loop.last %}, {% endif %}
                             {% endfor %}
+                        </p>
+                    </div>
+                    <div class="good-footer">
+                        <span class="good-price">от {{ pizza.price }} ₽</span>
+                        <button class="add-to-cart add-pizza"
+                                data-id="{{ pizza.id }}"
+                                data-name="{{ pizza.name }}"
+                                data-price="{{ pizza.price }}"
+                                data-image="{{ url_for('static', filename='img/' + pizza.image_path) }}">
+                            Выбрать
+                        </button>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Модальное окно для пиццы -->
+        <div id="pizzaModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <div class="modal-body">
+                    <div class="pizza-image-container">
+                        <img id="modalPizzaImage" src="" alt="Пицца" class="pizza-image">
+                    </div>
+                    <div class="pizza-options">
+                        <h2 id="modalPizzaTitle"></h2>
+
+                        <div class="size-options">
+                            <h3>Размер</h3>
+                            <div class="size-buttons">
+                                <button class="size-btn active" data-size="25" data-price="0">25 см</button>
+                                <button class="size-btn" data-size="30" data-price="200">30 см (+200₽)</button>
+                                <button class="size-btn" data-size="35" data-price="350">35 см (+350₽)</button>
+                            </div>
+                        </div>
+
+                        <div class="dough-options">
+                            <h3>Тесто</h3>
+                            <div class="dough-buttons">
+                                <button class="dough-btn active" data-dough="traditional">Традиционное</button>
+                                <button class="dough-btn" data-dough="thin">Тонкое</button>
+                            </div>
+                        </div>
+
+                        <div class="ingredients-options">
+                            <h3>Добавить по вкусу</h3>
+                            <div class="ingredients-grid">
+                                {% for ingredient in ingredients %}
+                                <div class="ingredient-card">
+                                    <label class="ingredient-item">
+                                        <input type="checkbox" data-id="{{ ingredient.id }}"
+                                               data-price="{{ ingredient.price }}">
+                                        <img src="{{ url_for('static', filename='img/' + ingredient.image_path) }}"
+                                             alt="{{ ingredient.name }}" class="ingredient-image">
+                                        <span>{{ ingredient.name }}</span>
+                                        <span class="ingredient-price">+{{ ingredient.price }} ₽</span>
+                                    </label>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <div class="modal-footer">
+                            <div class="total-price">
+                                Итого: <span id="modalTotalPrice">0</span> ₽
+                            </div>
+                            <button id="addPizzaToCart" class="add-to-cart">Добавить в корзину</button>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-                    <div class="modal-footer">
-                        <div class="total-price">
-                            Итого: <span id="modalTotalPrice"></span> ₽
-                        </div>
-                        <button id="addToCartFinal" class="add-to-cart">Добавить в корзину</button>
+    <!-- Секция напитков -->
+    <section id="drinks" class="drinks-section">
+        <h2 class="section-title">Напитки</h2>
+        <div class="good-grid">
+            {% for drink in drinks %}
+            <div class="good-card">
+                <div class="good-image-wrapper">
+                    <div class="good-image-container">
+                        <img src="{{ url_for('static', filename='img/' + drink.image_path) }}"
+                             alt="{{ drink.name }}" class="good-image">
+                    </div>
+                </div>
+                <div class="good-details">
+                    <h2 class="good-title">{{ drink.name }}</h2>
+                    <div class="good-footer">
+                        <span class="good-price">{{ drink.price }} ₽</span>
+                        <button class="add-to-cart add-drink"
+                                data-id="{{ drink.id }}"
+                                data-name="{{ drink.name }}"
+                                data-price="{{ drink.price }}"
+                                data-image="{{ url_for('static', filename='img/' + drink.image_path) }}">
+                            Выбрать
+                        </button>
                     </div>
                 </div>
             </div>
+            {% endfor %}
         </div>
-    </div>
-</section>
+    </section>
 
-<!-- Секция напитков -->
-<section id="drinks" class="drinks-section">
-    <h2 class="section-title">Напитки</h2>
-    <div class="good-grid">
-        {% for drink in drinks %}
-        <div class="good-card">
-            <div class="good-image-wrapper">
-                <div class="good-image-container">
-                    <img src="{{ url_for('static', filename='img/' + drink.image_path) }}"
-                         alt="{{ drink.name }}" class="good-image">
+    <!-- Секция десертов -->
+    <section id="desserts" class="desserts-section">
+        <h2 class="section-title">Десерты</h2>
+        <div class="good-grid">
+            {% for desert in deserts %}
+            <div class="good-card">
+                <div class="good-image-wrapper">
+                    <div class="good-image-container">
+                        <img src="{{ url_for('static', filename='img/' + desert.image_path) }}"
+                             alt="{{ desert.name }}" class="good-image">
+                    </div>
+                </div>
+                <div class="good-details">
+                    <h2 class="good-title">{{ desert.name }}</h2>
+                    <div class="good-footer">
+                        <span class="good-price">{{ desert.price }} ₽</span>
+                        <button class="add-to-cart add-dessert"
+                                data-id="{{ desert.id }}"
+                                data-name="{{ desert.name }}"
+                                data-price="{{ desert.price }}"
+                                data-image="{{ url_for('static', filename='img/' + desert.image_path) }}">
+                            Выбрать
+                        </button>
+                    </div>
                 </div>
             </div>
-            <div class="good-details">
-                <h2 class="good-title">{{ drink.name }}</h2>
-                <div class="good-footer">
-                    <span class="good-price">от {{ drink.price }} ₽</span>
-                    <button class="add-to-cart">Выбрать</button>
-                </div>
-            </div>
+            {% endfor %}
         </div>
-        {% endfor %}
-    </div>
-</section>
+    </section>
 
-<!-- Секция десертов -->
-<section id="desserts" class="desserts-section">
-    <h2 class="section-title">Десерты</h2>
-    <div class="good-grid">
-        {% for desert in deserts %}
-        <div class="good-card">
-            <div class="good-image-wrapper">
-                <div class="good-image-container">
-                    <img src="{{ url_for('static', filename='img/' + desert.image_path) }}"
-                         alt="{{ desert.name }}" class="good-image">
-                </div>
-            </div>
-            <div class="good-details">
-                <h2 class="good-title">{{ desert.name }}</h2>
-                <div class="good-footer">
-                    <span class="good-price">от {{ desert.price }} ₽</span>
-                    <button class="add-to-cart">Выбрать</button>
-                </div>
-            </div>
-        </div>
-        {% endfor %}
-    </div>
-</section>
+    <style>
+        /* Стили остаются без изменений */
+        .section-title {
+            font-size: 24px;
+            margin-left: 120px;
+            margin-top: 50px;
+            margin-bottom: 20px;
+        }
 
-<style>
-    .section-title {
-        font-size: 24px;
-        margin-left: 120px;
-        margin-top: 50px;
-        margin-bottom: 20px;
-    }
+        .good-grid {
+            margin-left:100px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(292px, 1fr));
+            gap: 20px;
+            justify-items: center;
+        }
 
-    .good-grid {
-        margin-left:100px;
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(292px, 1fr));
-        gap: 20px;
-        justify-items: center;
-    }
+        .good-card {
+            background: white;
+            width: 292px;
+            position: relative;
+            border-radius: 8px;
+            overflow: hidden;
+        }
 
-    .good-card {
-    background: white;
-    width: 292px;
-    position: relative;
-    border-radius: 8px;
-    overflow: hidden;
-    /* Убрали transition из карточки */
-}
+        .good-card:hover .good-image-container {
+            transform: translateY(-10px);
+        }
 
-    .good-card:hover .good-image-container {
-    transform: translateY(-10px); /* Анимация только для изображения */
-}
+        .good-image-wrapper {
+            height: 302px;
+            width: 292px;
+            position: relative;
+            margin-bottom: -10px;
+        }
 
-    .good-image-wrapper {
-        height: 302px;
-        width: 292px;
-        position: relative;
-        margin-bottom: -10px;
-    }
+        .good-image-container {
+            height: 292px;
+            width: 292px;
+            position: absolute;
+            bottom: 0;
+            transition: transform 0.3s ease;
+        }
 
-    .good-image-container {
-    height: 292px;
-    width: 292px;
-    position: absolute;
-    bottom: 0;
-    transition: transform 0.3s ease; /* Добавили transition только для контейнера изображения */
-}
+        .good-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 15px 15px;
+        }
 
+        .good-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
 
-    .good-footer {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 0 15px 15px;
-    }
+        .good-details {
+            padding: 15px;
+            text-align: center;
+        }
 
-    .good-image {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        display: block;
-    }
+        .good-title {
+            font-size: 18px;
+            text-align: left;
+            margin: 0 0 10px 0;
+        }
 
-    .good-details {
-        padding: 15px;
-        text-align: center;
-    }
+        .good-ingredients {
+            margin: 10px 0;
+            text-align: left;
+        }
 
-    .good-title {
-        font-size: 18px;
-        text-align: left;
-        margin: 0 0 10px 0;
-    }
+        .good-ingredients p {
+            margin: 0;
+            font-size: 13px;
+            color: #666;
+            line-height: 1.4;
+        }
 
-    .good-ingredients {
-        margin: 10px 0;
-        text-align: left;
-    }
+        .good-price {
+            font-size: 16px;
+            color: #e31837;
+            margin: 15px 0;
+            font-weight: bold;
+        }
 
-    .good-ingredients p {
-        margin: 0;
-        font-size: 13px;
-        color: #666;
-        line-height: 1.4;
-    }
+        .add-to-cart {
+            background: #e31837;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            width: 50%;
+            transition: background 0.3s;
+        }
 
-    .good-price {
-        font-size: 16px;
-        color: #e31837;
-        margin: 15px 0;
-        font-weight: bold;
-    }
+        .add-pizza {
+            background: #ff9800;
+        }
 
-    .add-to-cart {
-        background: #e31837;
-        color: white;
-        border: none;
-        padding: 10px 20px;
-        border-radius: 20px;
-        cursor: pointer;
-        font-weight: bold;
-        width: 50%;
-        transition: background 0.3s;
-    }
+        .add-drink {
+            background: #ff9800;
+        }
 
-    .add-to-cart:hover {
-        background: #c0102c;
-    }
+        .add-dessert {
+            background: #ff9800;
+        }
 
-    /* Стили для модального окна */
-    .modal {
-        display: none;
-        position: fixed;
-        z-index: 100;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0,0,0,0.5);
-        opacity: 0;
-        transition: opacity 0.3s ease;
-    }
+        .add-to-cart:hover {
+            opacity: 0.9;
+        }
 
-    .modal-content {
-        background-color: #fff;
-        margin: 5% auto;
-        border-radius: 8px;
-        width: 70%;
-        max-width: 800px;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-        display: flex;
-        transform: translateY(20px);
-        transition: transform 0.3s ease-out;
-    }
+        /* Стили модального окна остаются без изменений */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
 
-    .modal-body {
-        display: flex;
-        width: 100%;
-    }
+        .modal-content {
+            background-color: #fff;
+            margin: 5% auto;
+            border-radius: 8px;
+            width: 70%;
+            max-width: 800px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            display: flex;
+            transform: translateY(20px);
+            transition: transform 0.3s ease-out;
+        }
 
-    .pizza-image-container {
-        width: 40%;
-        padding: 20px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
+        .modal-body {
+            display: flex;
+            width: 100%;
+        }
 
-    .pizza-image {
-        width: 100%;
-        height: auto;
-        max-height: 350px;
-        object-fit: contain;
-        border-radius: 8px;
-    }
+        .pizza-image-container {
+            width: 40%;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
 
-    .pizza-options {
-        width: 60%;
-        padding: 20px;
-    }
+        .pizza-image {
+            width: 100%;
+            height: auto;
+            max-height: 350px;
+            object-fit: contain;
+            border-radius: 8px;
+        }
 
-    .pizza-options h2{
-        margin-bottom:15px;
-    }
+        .pizza-options {
+            width: 60%;
+            padding: 20px;
+        }
 
-    .close {
-        color: #aaa;
-        position: absolute;
-        right: 20px;
-        top: 10px;
-        font-size: 28px;
-        font-weight: bold;
-        cursor: pointer;
-        z-index: 1;
-    }
+        .pizza-options h2{
+            margin-bottom:15px;
+        }
 
-    .close:hover {
-        color: #333;
-    }
+        .close {
+            color: #aaa;
+            position: absolute;
+            right: 20px;
+            top: 10px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            z-index: 1;
+        }
 
-    .size-options, .dough-options, .ingredients-options {
-        margin-bottom: 20px;
-    }
+        .close:hover {
+            color: #333;
+        }
 
-    .size-buttons, .dough-buttons {
-        display: flex;
-        gap: 10px;
-        margin-top: 10px;
-    }
+        .size-options, .dough-options, .ingredients-options {
+            margin-bottom: 20px;
+        }
 
-    .size-btn, .dough-btn {
-        padding: 8px 15px;
-        border: 1px solid #ddd;
-        background: #f5f5f5;
-        border-radius: 4px;
-        cursor: pointer;
-        transition: all 0.2s;
-    }
+        .size-buttons, .dough-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
 
-    .size-btn.active, .dough-btn.active {
-        background: #e31837;
-        color: white;
-        border-color: #e31837;
-    }
+        .size-btn, .dough-btn {
+            padding: 8px 15px;
+            border: 1px solid #ddd;
+            background: #f5f5f5;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
 
-    .ingredients-grid {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 15px;
-        margin-top: 10px;
-    }
+        .size-btn.active, .dough-btn.active {
+            background: #e31837;
+            color: white;
+            border-color: #e31837;
+        }
 
-    .ingredient-card {
-        border: 1px solid #eee;
-        border-radius: 8px;
-        padding: 15px;
-        transition: all 0.3s ease;
-        cursor: pointer;
-    }
+        .ingredients-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 10px;
+        }
 
-    .ingredient-card:hover {
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
+        .ingredient-card {
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 15px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
 
-    .ingredient-item {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        cursor: pointer;
-    }
+        .ingredient-card:hover {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
 
-    .ingredient-image {
-        width: 80px;
-        height: 80px;
-        object-fit: cover;
-        border-radius: 50%;
-        margin-bottom: 8px;
-        border: 2px solid transparent;
-        transition: all 0.2s;
-    }
+        .ingredient-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+        }
 
-    .ingredient-price {
-        color: #e31837;
-        font-weight: bold;
-        margin-top: 5px;
-        font-size: 14px;
-    }
+        .ingredient-image {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 50%;
+            margin-bottom: 8px;
+            border: 2px solid transparent;
+            transition: all 0.2s;
+        }
 
-    input[type="checkbox"] {
-        display: none;
-    }
+        .ingredient-price {
+            color: #e31837;
+            font-weight: bold;
+            margin-top: 5px;
+            font-size: 14px;
+        }
 
-    input[type="checkbox"]:checked + .ingredient-image {
-        border-color: #e31837;
-        box-shadow: 0 0 0 2px #e31837;
-    }
+        input[type="checkbox"] {
+            display: none;
+        }
 
-    .modal-footer {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-top: 20px;
-        padding-top: 15px;
-        border-top: 1px solid #eee;
-    }
+        input[type="checkbox"]:checked + .ingredient-image {
+            border-color: #e31837;
+            box-shadow: 0 0 0 2px #e31837;
+        }
 
-    .total-price {
-        font-weight: bold;
-        font-size: 18px;
-    }
+        .modal-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
 
-    #addToCartFinal {
-        width: auto;
-        padding: 10px 25px;
-    }
-</style>
+        .total-price {
+            font-weight: bold;
+            font-size: 18px;
+        }
 
-<script>
-    // Плавная прокрутка
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function(e) {
-            e.preventDefault();
-            const target = document.querySelector(this.getAttribute('href'));
-            if (target) {
-                window.scrollTo({
-                    top: target.offsetTop - 50,
-                    behavior: 'smooth'
-                });
-            }
-        });
-    });
+        #addPizzaToCart {
+            width: auto;
+            padding: 10px 25px;
+        }
 
-    // Модальное окно для пиццы
-    document.addEventListener('DOMContentLoaded', function() {
+        /* Toast уведомления */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #333;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 4px;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .toast.show {
+            opacity: 1;
+        }
+    </style>
+
+    <script>
+        window.isAuthenticated = {{ is_authenticated|tojson }};
+        document.addEventListener('DOMContentLoaded', function() {
+        // Элементы DOM
         const modal = document.getElementById('pizzaModal');
         const closeBtn = document.querySelector('.close');
-        const addToCartButtons = document.querySelectorAll('.add-to-cart');
+        const modalContent = document.querySelector('.modal-content');
+        const addPizzaBtns = document.querySelectorAll('.add-pizza');
+        const addDrinkBtns = document.querySelectorAll('.add-drink');
+        const addDessertBtns = document.querySelectorAll('.add-dessert');
         const sizeButtons = document.querySelectorAll('.size-btn');
         const doughButtons = document.querySelectorAll('.dough-btn');
         const ingredientCheckboxes = document.querySelectorAll('.ingredient-card input[type="checkbox"]');
         const totalPriceElement = document.getElementById('modalTotalPrice');
         const modalPizzaImage = document.getElementById('modalPizzaImage');
-        const modalContent = document.querySelector('.modal-content');
+        const modalPizzaTitle = document.getElementById('modalPizzaTitle');
+        const addPizzaToCartBtn = document.getElementById('addPizzaToCart');
 
-        let currentBasePrice = 699;
-        let currentSize = '25';
-        let currentDough = 'traditional';
-        let extraIngredientsPrice = 0;
+        // Создаем элемент для toast-уведомлений
+        const toast = document.createElement('div');
+        toast.className = 'toast';
+        document.body.appendChild(toast);
 
-        // Анимация появления
+        // Текущие данные пиццы
+        let currentPizza = {
+            id: null,
+            name: '',
+            originalBasePrice: 0,
+            basePrice: 0,
+            size: '25',
+            dough: 'traditional',
+            extraIngredients: [],
+            totalPrice: 0
+        };
+
+        // 1. Функции для работы с UI
+        function showToast(message, type = 'success') {
+            toast.textContent = message;
+            toast.style.backgroundColor = type === 'error' ? '#e31837' : '#4CAF50';
+            toast.classList.add('show');
+
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
         function fadeIn(element) {
             element.style.display = 'block';
             setTimeout(() => {
@@ -456,7 +511,6 @@
             }, 10);
         }
 
-        // Анимация исчезновения
         function fadeOut(element) {
             element.style.opacity = '0';
             modalContent.style.transform = 'translateY(20px)';
@@ -465,112 +519,283 @@
             }, 300);
         }
 
-        // Открытие модального окна
-        addToCartButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                const pizzaName = this.dataset.name;
-                const pizzaPrice = parseInt(this.dataset.basePrice);
-                const pizzaImage = this.dataset.image;
+        // 2. Функции для работы с корзиной
+        function updatePizzaPrice() {
+            currentPizza.totalPrice = currentPizza.basePrice;
+            currentPizza.extraIngredients.forEach(ing => {
+                currentPizza.totalPrice += ing.price;
+            });
+            totalPriceElement.textContent = currentPizza.totalPrice;
+        }
 
-                document.getElementById('modalPizzaTitle').textContent = pizzaName;
-                modalPizzaImage.src = pizzaImage;
-                modalPizzaImage.alt = pizzaName;
+        function checkAuth() {
+    return window.isAuthenticated;
+}
 
-                document.querySelector('.size-btn[data-size="25"]').dataset.price = pizzaPrice;
-                currentBasePrice = pizzaPrice;
+        // 3. Обработчики событий для модального окна пиццы
+        closeBtn.addEventListener('click', () => fadeOut(modal));
+        window.addEventListener('click', (e) => e.target === modal && fadeOut(modal));
 
-                // Сброс предыдущих выборов
-                sizeButtons.forEach(btn => {
-                    btn.classList.remove('active');
-                    if (btn.dataset.size === '25') btn.classList.add('active');
-                });
+        addPizzaBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                if (!checkAuth()) {
+                    window.location.href = '/auth';
+                    return;
+                }
 
-                doughButtons.forEach(btn => {
-                    btn.classList.remove('active');
-                    if (btn.dataset.dough === 'traditional') btn.classList.add('active');
-                });
+                // Инициализация данных пиццы
+                const basePrice = parseInt(this.dataset.price);
+                currentPizza = {
+                    id: this.dataset.id,
+                    name: this.dataset.name,
+                    originalBasePrice: basePrice,
+                    basePrice: basePrice,
+                    size: '25',
+                    dough: 'traditional',
+                    extraIngredients: [],
+                    totalPrice: basePrice
+                };
 
-                document.querySelectorAll('.ingredient-card input[type="checkbox"]').forEach(checkbox => {
-                    checkbox.checked = false;
-                });
+                modalPizzaTitle.textContent = currentPizza.name;
+                modalPizzaImage.src = this.dataset.image;
+                modalPizzaImage.alt = currentPizza.name;
+                totalPriceElement.textContent = currentPizza.basePrice;
 
-                currentSize = '25';
-                currentDough = 'traditional';
-                extraIngredientsPrice = 0;
-                totalPriceElement.textContent = currentBasePrice;
+                // Сброс выбранных параметров
+                sizeButtons.forEach(b => b.classList.remove('active'));
+                doughButtons.forEach(b => b.classList.remove('active'));
+                ingredientCheckboxes.forEach(cb => cb.checked = false);
+
+                document.querySelector('.size-btn[data-size="25"]').classList.add('active');
+                document.querySelector('.dough-btn[data-dough="traditional"]').classList.add('active');
 
                 fadeIn(modal);
             });
         });
 
-        // Закрытие модального окна
-        closeBtn.addEventListener('click', function() {
-            fadeOut(modal);
-        });
-
-        window.addEventListener('click', function(event) {
-            if (event.target === modal) {
-                fadeOut(modal);
-            }
-        });
-
         // Выбор размера пиццы
-        sizeButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                sizeButtons.forEach(btn => btn.classList.remove('active'));
+        sizeButtons.forEach(btn => {
+            btn.addEventListener('click', function() {
+                sizeButtons.forEach(b => b.classList.remove('active'));
                 this.classList.add('active');
-                currentSize = this.dataset.size;
-                currentBasePrice = parseInt(this.dataset.price);
-                updateTotalPrice();
+
+                const sizePriceDelta = parseInt(this.dataset.price);
+                currentPizza.size = this.dataset.size;
+                currentPizza.basePrice = currentPizza.originalBasePrice + sizePriceDelta;
+                updatePizzaPrice();
             });
         });
 
         // Выбор теста
-        doughButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                doughButtons.forEach(btn => btn.classList.remove('active'));
+        doughButtons.forEach(btn => {
+            btn.addEventListener('click', function() {
+                doughButtons.forEach(b => b.classList.remove('active'));
                 this.classList.add('active');
-                currentDough = this.dataset.dough;
+                currentPizza.dough = this.dataset.dough;
             });
         });
 
-        // Выбор дополнительных ингредиентов
-        ingredientCheckboxes.forEach(checkbox => {
-            checkbox.addEventListener('change', function() {
-                updateTotalPrice();
-            });
-        });
+        // Выбор ингредиентов
+        ingredientCheckboxes.forEach(cb => {
+            cb.addEventListener('change', function() {
+                const ingredient = {
+                    id: this.dataset.id,
+                    name: this.nextElementSibling.nextElementSibling.textContent,
+                    price: parseInt(this.dataset.price)
+                };
 
-        // Обновление итоговой цены
-        function updateTotalPrice() {
-            extraIngredientsPrice = 0;
-            ingredientCheckboxes.forEach(checkbox => {
-                if (checkbox.checked) {
-                    extraIngredientsPrice += parseInt(checkbox.dataset.price);
+                if (this.checked) {
+                    currentPizza.extraIngredients.push(ingredient);
+                } else {
+                    currentPizza.extraIngredients = currentPizza.extraIngredients.filter(
+                        ing => ing.id !== ingredient.id
+                    );
                 }
-            });
 
-            const totalPrice = currentBasePrice + extraIngredientsPrice;
-            totalPriceElement.textContent = totalPrice;
+                updatePizzaPrice();
+            });
+        });
+
+        // Добавление пиццы в корзину
+        addPizzaToCartBtn.addEventListener('click', function() {
+            const pizzaData = {
+                size: currentPizza.size,
+                dough: currentPizza.dough,
+                extraIngredients: currentPizza.extraIngredients.map(ing => ({
+                    id: ing.id,
+                    name: ing.name,
+                    price: ing.price
+                }))
+            };
+
+            fetch('/add_to_cart/pizza/' + currentPizza.id, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(pizzaData)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    showToast(`Пицца "${currentPizza.name}" добавлена в корзину`);
+                    fadeOut(modal);
+                } else {
+                    showToast(data.message || 'Ошибка при добавлении в корзину', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showToast('Ошибка при добавлении в корзину', 'error');
+            });
+        });
+
+        // 4. Обработчики для напитков и десертов
+        function setupSimpleAddToCart(buttons, type) {
+            buttons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    if (!checkAuth()) {
+                        window.location.href = '/auth';
+                        return;
+                    }
+
+                    fetch('/add_to_cart/' + type + '/' + this.dataset.id, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({})
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.success) {
+                            showToast(`${this.dataset.name} добавлен в корзину`);
+                        } else {
+                            showToast(data.message || 'Ошибка при добавлении в корзину', 'error');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        showToast('Ошибка при добавлении в корзину', 'error');
+                    });
+                });
+            });
         }
 
-        // Добавление в корзину
-        document.getElementById('addToCartFinal').addEventListener('click', function() {
-            // Собираем выбранные ингредиенты
-            const selectedIngredients = [];
-            document.querySelectorAll('.ingredient-card input[type="checkbox"]:checked').forEach(checkbox => {
-                selectedIngredients.push(checkbox.nextElementSibling.nextElementSibling.textContent);
+        setupSimpleAddToCart(addDrinkBtns, 'drink');
+        setupSimpleAddToCart(addDessertBtns, 'desert');
+
+        // 5. Обработчики для страницы корзины
+        if (document.querySelector('.cart-section')) {
+            // Переключение между самовывозом и доставкой
+            const deliveryType = document.querySelectorAll('input[name="delivery"]');
+            const restaurantSelect = document.querySelector('.restaurant-select');
+            const deliveryAddress = document.querySelector('.delivery-address');
+
+            if (deliveryType.length) {
+                deliveryType.forEach(radio => {
+                    radio.addEventListener('change', function() {
+                        if (this.value === 'pickup') {
+                            restaurantSelect.style.display = 'block';
+                            deliveryAddress.style.display = 'none';
+                        } else {
+                            restaurantSelect.style.display = 'none';
+                            deliveryAddress.style.display = 'block';
+                        }
+                    });
+                });
+            }
+
+            // Изменение количества товаров
+            document.querySelectorAll('.quantity-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const itemId = this.dataset.id;
+                    const isPlus = this.classList.contains('plus');
+
+                    fetch('/cart/update_quantity', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            item_id: itemId,
+                            action: isPlus ? 'increase' : 'decrease'
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            location.reload();
+                        }
+                    });
+                });
             });
 
-            alert(`Добавлено в корзину:\nПицца "${document.getElementById('modalPizzaTitle').textContent}"\nРазмер: ${currentSize} см\nТесто: ${currentDough === 'traditional' ? 'традиционное' : 'тонкое'}\nДоп. ингредиенты: ${selectedIngredients.join(', ') || 'нет'}\nЦена: ${totalPriceElement.textContent} ₽`);
+            // Удаление товара из корзины
+            document.querySelectorAll('.remove-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    if (confirm('Удалить товар из корзины?')) {
+                        const itemId = this.dataset.id;
 
-            fadeOut(modal);
-        });
+                        fetch('/cart/remove_item', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                item_id: itemId
+                            })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                location.reload();
+                            }
+                        });
+                    }
+                });
+            });
 
-        // Инициализация модального окна
-        modal.style.display = 'none';
-        modal.style.opacity = '0';
-        modalContent.style.transform = 'translateY(20px)';
+            // Оформление заказа
+            const checkoutBtn = document.querySelector('.checkout-btn');
+            if (checkoutBtn) {
+                checkoutBtn.addEventListener('click', function() {
+                    const deliveryType = document.querySelector('input[name="delivery"]:checked').value;
+                    const restaurantId = document.getElementById('restaurant').value;
+                    const address = document.getElementById('address').value;
+
+                    fetch('/cart/checkout', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            delivery_type: deliveryType,
+                            restaurant_id: deliveryType === 'pickup' ? restaurantId : null,
+                            address: deliveryType === 'delivery' ? address : null
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            window.location.href = '/orders/' + data.order_id;
+                        } else {
+                            alert(data.message || 'Ошибка при оформлении заказа');
+                        }
+                    });
+                });
+            }
+        }
     });
-</script>
-{% endblock %}
+    </script>
+    {% endblock %}

@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Авторизация</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            background: #f8f1e5;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .form-container {
+            max-width: 500px;
+            margin: 40px auto;
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(230, 126, 34, 0.1);
+        }
+
+        .tab-group {
+            display: flex;
+            list-style: none;
+            padding: 0;
+            margin: 0 0 30px 0;
+        }
+
+        .tab {
+            flex: 1;
+            text-align: center;
+        }
+
+        .tab a {
+            display: block;
+            padding: 15px;
+            background: rgba(230, 126, 34, 0.1);
+            color: #e67e22;
+            text-decoration: none;
+            transition: all 0.3s;
+            border-radius: 5px 5px 0 0;
+        }
+
+        .tab.active a {
+            background: #e67e22;
+            color: white;
+        }
+
+        .form-title {
+            text-align: center;
+            color: #e67e22;
+            margin-bottom: 30px;
+        }
+
+        .field-wrap {
+            position: relative;
+            margin-bottom: 30px;
+        }
+
+        label {
+            position: absolute;
+            left: 15px;
+            top: 15px;
+            color: #999;
+            transition: all 0.3s;
+            pointer-events: none;
+            font-size: 16px;
+        }
+
+        input {
+            width: 100%;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #e67e22;
+        }
+
+        input:focus + label,
+        input:not(:placeholder-shown) + label {
+            transform: translateY(-25px);
+            font-size: 12px;
+            color: #e67e22;
+            background: white;
+            padding: 0 5px;
+        }
+
+        .req {
+            color: #e67e22;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 15px;
+            background: #e67e22;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .submit-btn:hover {
+            background: #d35400;
+        }
+
+        /* Изначально скрываем обе формы */
+        #signup {
+            display: none;
+        }
+
+        #login {
+            display: none;
+        }
+
+        .alert {
+            padding: 10px 15px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .alert-error {
+            background-color: #fdecea;
+            color: #e74c3c;
+            border: 1px solid #e74c3c;
+        }
+
+        .alert-success {
+            background-color: #e8f5e9;
+            color: #2ecc71;
+            border: 1px solid #2ecc71;
+        }
+
+        .password-hint {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+            margin-bottom: 10px;
+            display: none;
+        }
+
+        .password-match {
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <ul class="tab-group">
+            <li class="tab" id="login-tab"><a href="#login">Вход</a></li>
+            <li class="tab" id="signup-tab"><a href="#signup">Регистрация</a></li>
+        </ul>
+
+        <div id="login">
+            <h1 class="form-title">С возвращением!</h1>
+
+            <div id="login-alert" class="alert"></div>
+
+            <form method="POST" action="{{ url_for('auth.auth_handler') }}">
+                <input type="hidden" name="form_type" value="login">
+
+                <div class="field-wrap">
+                    <input type="email" name="email" placeholder=" " required />
+                    <label>Email<span class="req">*</span></label>
+                </div>
+
+                <div class="field-wrap">
+                    <input type="password" name="password" placeholder=" " required />
+                    <label>Пароль<span class="req">*</span></label>
+                </div>
+
+                <button type="submit" class="submit-btn">ВОЙТИ</button>
+            </form>
+        </div>
+
+        <div id="signup">
+            <h1 class="form-title">Регистрация</h1>
+
+            <div id="signup-alert" class="alert"></div>
+
+            <form method="POST" action="{{ url_for('auth.auth_handler') }}" onsubmit="return validateForm()">
+                <input type="hidden" name="form_type" value="signup">
+
+                <div class="field-wrap">
+                    <input type="text" name="name" placeholder=" " required />
+                    <label>Имя<span class="req">*</span></label>
+                </div>
+
+                <div class="field-wrap">
+                    <input type="email" name="email" placeholder=" " required />
+                    <label>Email<span class="req">*</span></label>
+                </div>
+
+                <div class="field-wrap">
+                    <input type="password" name="password" placeholder=" " required id="password"
+                           oninput="showPasswordHint(this.value); checkPasswordMatch()"/>
+                    <label>Пароль<span class="req">*</span></label>
+                    <div id="password-hint" class="password-hint">
+                        Длина пароля должна быть не менее 6 символов и содержать буквы и цифры
+                    </div>
+                </div>
+
+                <div class="field-wrap">
+                    <input type="password" name="confirm_password" placeholder=" " required
+                           id="confirm_password" oninput="checkPasswordMatch()"/>
+                    <label>Подтвердите пароль<span class="req">*</span></label>
+                    <div id="password-match" class="password-match"></div>
+                </div>
+
+                <button type="submit" name="signup" class="submit-btn">ЗАРЕГИСТРИРОВАТЬСЯ</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Определяем начальное состояние сразу при загрузке страницы
+        (function() {
+            // По умолчанию активируем вкладку входа
+            let activeTab = 'login';
+            let alertToShow = null;
+
+            // Анализируем flash-сообщения
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        if ("{{ category }}" === "error") {
+                            if ("{{ message }}".includes("already registered") || "{{ message }}".includes("уже зарегистрирован")) {
+                                activeTab = 'signup';
+                                alertToShow = {
+                                    id: 'signup-alert',
+                                    message: "{{ message }}",
+                                    type: 'error'
+                                };
+                            } else {
+                                activeTab = 'login';
+                                alertToShow = {
+                                    id: 'login-alert',
+                                    message: "{{ message }}",
+                                    type: 'error'
+                                };
+                            }
+                        } else if ("{{ category }}" === "success") {
+                            activeTab = 'login';
+                            alertToShow = {
+                                id: 'login-alert',
+                                message: "{{ message }}",
+                                type: 'success'
+                            };
+                        }
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            // Активируем нужную вкладку сразу
+            if (activeTab === 'login') {
+                document.getElementById('login-tab').classList.add('active');
+                document.getElementById('login').style.display = 'block';
+            } else {
+                document.getElementById('signup-tab').classList.add('active');
+                document.getElementById('signup').style.display = 'block';
+            }
+
+            // Показываем сообщение, если есть
+            if (alertToShow) {
+                const alertElement = document.getElementById(alertToShow.id);
+                alertElement.textContent = alertToShow.message;
+                alertElement.className = 'alert alert-' + alertToShow.type;
+                alertElement.style.display = 'block';
+            }
+
+            // Назначаем обработчики вкладок
+            document.getElementById('login-tab').addEventListener('click', function(e) {
+                e.preventDefault();
+                switchToTab('login');
+            });
+
+            document.getElementById('signup-tab').addEventListener('click', function(e) {
+                e.preventDefault();
+                switchToTab('signup');
+            });
+        })();
+
+        // Функция переключения вкладок
+        function switchToTab(tabName) {
+            if (tabName === 'login') {
+                document.getElementById('login-tab').classList.add('active');
+                document.getElementById('signup-tab').classList.remove('active');
+                document.getElementById('login').style.display = 'block';
+                document.getElementById('signup').style.display = 'none';
+                document.getElementById('signup-alert').style.display = 'none';
+            } else {
+                document.getElementById('login-tab').classList.remove('active');
+                document.getElementById('signup-tab').classList.add('active');
+                document.getElementById('login').style.display = 'none';
+                document.getElementById('signup').style.display = 'block';
+                document.getElementById('login-alert').style.display = 'none';
+            }
+        }
+
+        // Показать подсказку для пароля
+        function showPasswordHint(value) {
+            const hint = document.getElementById('password-hint');
+            if (value.length > 0 && !isPasswordValid(value)) {
+                hint.style.display = 'block';
+                hint.style.color = '#e74c3c';
+            } else {
+                hint.style.display = 'none';
+            }
+        }
+
+        // Проверить валидность пароля
+        function isPasswordValid(password) {
+            return password.length >= 6 && /\d/.test(password) && /[a-zA-Zа-яА-Я]/.test(password);
+        }
+
+        // Проверить совпадение паролей
+        function checkPasswordMatch() {
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirm_password').value;
+            const message = document.getElementById('password-match');
+
+            if (confirmPassword.length === 0) {
+                message.style.display = 'none';
+                return false;
+            }
+
+            message.style.display = 'block';
+
+            if (password !== confirmPassword) {
+                message.textContent = "Пароли не совпадают!";
+                message.style.color = "#e74c3c";
+                return false;
+            } else {
+                message.textContent = "Пароли совпадают!";
+                message.style.color = "#2ecc71";
+                return true;
+            }
+        }
+
+        // Валидация формы регистрации
+        function validateForm() {
+            const password = document.getElementById('password').value;
+            const isMatch = checkPasswordMatch();
+
+            if (!isPasswordValid(password)) {
+                document.getElementById('password-hint').style.display = 'block';
+                document.getElementById('password-hint').style.color = '#e74c3c';
+
+                const alertElement = document.getElementById('signup-alert');
+                alertElement.textContent = "Пароль должен быть не менее 6 символов и содержать буквы и цифры";
+                alertElement.className = 'alert alert-error';
+                alertElement.style.display = 'block';
+
+                return false;
+            }
+
+            if (!isMatch) {
+                const alertElement = document.getElementById('signup-alert');
+                alertElement.textContent = "Пароли не совпадают!";
+                alertElement.className = 'alert alert-error';
+                alertElement.style.display = 'block';
+
+                return false;
+            }
+
+            return true;
+        }
+    </script>
+</body>
+</html>

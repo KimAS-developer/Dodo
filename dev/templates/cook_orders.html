@@ -1,0 +1,250 @@
+{% extends 'baseTemplates/basePageWithoutHeader.html' %}
+{% block title %}Управление заказами{% endblock %}
+{% block content %}
+<style>
+    .orders-section {
+        padding: 2rem;
+        max-width: 1200px;
+        margin: 0 auto;
+        font-family: 'Roboto', sans-serif;
+    }
+
+    .section-title {
+        text-align: center;
+        margin-bottom: 2rem;
+        color: #333;
+        font-size: 2rem;
+        font-weight: 700;
+    }
+
+    .orders-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .order-card {
+        background: #fff;
+        padding: 1.5rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr;
+        gap: 1rem;
+        align-items: center;
+    }
+
+    .order-details h3 {
+        font-size: 1.2rem;
+        margin: 0 0 0.5rem 0;
+        color: #333;
+    }
+
+    .order-details p {
+        margin: 0.2rem 0;
+        color: #555;
+        font-size: 0.9rem;
+    }
+
+    .order-status {
+        font-weight: 600;
+        color: #e63946;
+    }
+
+    .order-actions {
+        display: flex;
+        gap: 0.5rem;
+        justify-content: flex-end;
+    }
+
+    .action-btn {
+        padding: 0.5rem 1rem;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 0.9rem;
+        transition: background 0.2s;
+    }
+
+    .accept-btn {
+        background: #4CAF50;
+        color: white;
+    }
+
+    .accept-btn:hover {
+        background: #45a049;
+    }
+
+    .complete-btn {
+        background: #2196F3;
+        color: white;
+    }
+
+    .complete-btn:hover {
+        background: #1e88e5;
+    }
+
+    .action-btn:disabled {
+        background: #e0e0e0;
+        cursor: not-allowed;
+    }
+
+    .empty-orders {
+        text-align: center;
+        padding: 3rem;
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .empty-orders p {
+        font-size: 1.2rem;
+        color: #555;
+    }
+
+    @media (max-width: 768px) {
+        .order-card {
+            grid-template-columns: 1fr;
+            text-align: center;
+        }
+
+        .order-actions {
+            justify-content: center;
+        }
+    }
+</style>
+
+<section class="orders-section">
+    <h2 class="section-title">Управление заказами</h2>
+
+    <div class="orders-list">
+        {% if orders %}
+        {% for order in orders %}
+        <div class="order-card" data-id="{{ order.id }}">
+            <div class="order-details">
+                <h3>Заказ #{{ order.id }}</h3>
+                <p>Клиент: {{ order.user.name }}</p>
+                <p>Сумма: {{ order.get_total_price() }} ₽</p>
+                <p>Способ получения: {{ 'Самовывоз' if order.delivery_type == 'pickup' else 'Доставка' }}</p>
+                {% if order.delivery_type == 'delivery' %}
+                <p>Адрес: {{ order.address }}</p>
+                {% endif %}
+                <p>Способ оплаты: {{ 'Наличными' if order.payment_method == 'cash' else 'Картой' }}</p>
+                {% for item in order.items %}
+                <p>{{ item.name }} ({{ item.type }}) - {{ item.quantity }} шт. ({{ item.total_price }} ₽)</p>
+                {% if item.size or item.dough or item.extra_ingredients %}
+                <p>
+                    {% if item.size %}Размер: {{ item.size }} см, {% endif %}
+                    {% if item.dough %}Тесто: {{ item.dough|capitalize }}, {% endif %}
+                    {% if item.extra_ingredients %}
+                    Дополнительно: {{ item.extra_ingredients|map(attribute='name')|join(', ') }}
+                    {% endif %}
+                </p>
+                {% endif %}
+                {% endfor %}
+            </div>
+            <div class="order-status">
+                {{ order.status }}
+            </div>
+            <div class="order-actions">
+                <button class="action-btn accept-btn"
+                        {% if order.status != 'В обработке' %}disabled{% endif %}>
+                    Принять
+                </button>
+                <button class="action-btn complete-btn"
+                        {% if order.status != 'Готовится' %}disabled{% endif %}>
+                    Завершить
+                </button>
+            </div>
+        </div>
+        {% endfor %}
+        {% else %}
+        <div class="empty-orders">
+            <p>Нет активных заказов</p>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<script>
+    class OrdersManager {
+        constructor() {
+            this.initEvents();
+        }
+
+        initEvents() {
+            document.addEventListener('click', e => {
+                const target = e.target;
+                if (target.classList.contains('accept-btn')) {
+                    this.handleAcceptOrder(target);
+                } else if (target.classList.contains('complete-btn')) {
+                    this.handleCompleteOrder(target);
+                }
+            });
+        }
+
+        async handleAcceptOrder(button) {
+            const orderCard = button.closest('.order-card');
+            const orderId = orderCard.dataset.id;
+            button.disabled = true;
+
+            try {
+                const response = await this.sendRequest(`/api/orders/${orderId}/accept`, 'POST');
+                if (response.status === 'success') {
+                    orderCard.querySelector('.order-status').textContent = 'Готовится';
+                    button.disabled = true;
+                    orderCard.querySelector('.complete-btn').disabled = false;
+                }
+            } catch (error) {
+                this.showError(error);
+            }
+        }
+
+        async handleCompleteOrder(button) {
+            const orderCard = button.closest('.order-card');
+            const orderId = orderCard.dataset.id;
+            button.disabled = true;
+
+            try {
+                const response = await this.sendRequest(`/api/orders/${orderId}/complete`, 'POST');
+                if (response.status === 'success') {
+                    orderCard.querySelector('.order-status').textContent = 'Готово';
+                    button.disabled = true;
+                }
+            } catch (error) {
+                this.showError(error);
+            }
+        }
+
+        async sendRequest(url, method, data = null) {
+            const headers = {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]')?.content || ''
+            };
+
+            const response = await fetch(url, {
+                method,
+                headers,
+                body: data ? JSON.stringify(data) : null
+            });
+
+            if (!response.ok) {
+                const error = await response.json().catch(() => ({}));
+                throw new Error(error.message || 'Ошибка сервера');
+            }
+
+            return response.json();
+        }
+
+        showError(error) {
+            console.error('Order Error:', error);
+            alert(error.message || 'Произошла ошибка');
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        new OrdersManager();
+    });
+</script>
+{% endblock %}
