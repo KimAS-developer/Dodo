@@ -1,46 +1,162 @@
-<div class="container">
-    <footer class="py-5">
-        <div class="row">
-            <div class="col-2">
-                <h5>Додоооо-пицца</h5>
-                <ul class="nav flex-column">
-                    <li class="nav-item mb-2"><a href="/" class="nav-link p-0 text-muted">О нас</a></li>
-                    <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-muted">Додо-книга</a></li>
-                    <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-muted">Блог "Сила ума"</a></li>
+<footer class="site-footer">
+    <div class="footer-container">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h5 class="footer-title">Dodoooo Pizza</h5>
+                <ul class="footer-links">
+                    <li><a href="/">О нас</a></li>
+                    <li><a href="#">Додо-книга</a></li>
+                    <li><a href="#">Блог "Сила ума"</a></li>
                 </ul>
             </div>
 
-            <div class="col-2">
-                <h5>Работа</h5>
-                <ul class="nav flex-column">
-                    <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-muted">В пиццерии</a></li>
+            <div class="footer-section">
+                <h5 class="footer-title">Работа</h5>
+                <ul class="footer-links">
+                    <li><a href="#">В пиццерии</a></li>
                 </ul>
             </div>
 
-            <div class="col-2">
-                <h5>Партнерам</h5>
-                <ul class="nav flex-column">
-                    <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-muted">Франшиза</a></li>
-                    <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-muted">Инвестици</a></li>
-                    <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-muted">Поставщикам</a></li>
+            <div class="footer-section">
+                <h5 class="footer-title">Партнерам</h5>
+                <ul class="footer-links">
+                    <li><a href="#">Франшиза</a></li>
+                    <li><a href="#">Инвестиции</a></li>
+                    <li><a href="#">Поставщикам</a></li>
                 </ul>
             </div>
 
-            <div class="col-4 offset-1">
-                <form>
-                    <h5>Остались вопросы?</h5>
-                    <p>Напишите нам!</p>
-                    <div class="d-flex flex-column w-100 gap-2">
-                        <input id="newsletter1" type="text" class="form-control" placeholder="Ваша почта">
-                        <input id="newsletter2" type="text" class="form-control" placeholder="Вопрос...">
-                        <button class="btn btn-danger" type="button">Отправить</button>
-                    </div>
+            <div class="footer-contact">
+                <h5 class="footer-title">Остались вопросы?</h5>
+                <p class="footer-text">Напишите нам!</p>
+                <form class="contact-form">
+                    <input type="email" placeholder="Ваша почта" required>
+                    <textarea placeholder="Вопрос..." required></textarea>
+                    <button type="submit" class="submit-btn">Отправить</button>
                 </form>
             </div>
         </div>
 
-        <div class="d-flex justify-content-between py-4 my-4 border-top">
-            <p>© 2025 Dodoooo. All rights reserved.</p>
+        <div class="footer-bottom">
+            <p class="copyright">© 2025 Dodoooo Pizza. All rights reserved.</p>
         </div>
-    </footer>
-</div>
+    </div>
+</footer>
+
+<style>
+/* FOOTER STYLES */
+.site-footer {
+    background: #181818;
+    padding: 40px 0 20px;
+    margin-top: 50px;
+    border-top: 1px solid #FFE0B2;
+}
+
+.footer-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.footer-text{
+    color: #ffffff;
+}
+
+.footer-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 30px;
+    margin-bottom: 30px;
+}
+
+.footer-section {
+    margin-bottom: 20px;
+}
+
+.footer-title {
+    color: #ffffff;
+    font-size: 1.2rem;
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+.footer-links {
+    list-style: none;
+    padding: 0;
+}
+
+.footer-links li {
+    margin-bottom: 10px;
+}
+
+.footer-links a {
+    color: #ffffff;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.footer-links a:hover {
+    color: #ffffff;
+
+}
+
+.footer-contact {
+    grid-column: span 2;
+}
+
+.contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.contact-form input,
+.contact-form textarea {
+    padding: 10px 15px;
+    border: 1px solid #FFCC80;
+    border-radius: 6px;
+    background: white;
+}
+
+.contact-form textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+.submit-btn {
+    background: #FF6B00;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background 0.3s;
+    align-self: flex-start;
+}
+
+.submit-btn:hover {
+    background: #E65100;
+}
+
+.footer-bottom {
+    border-top: 1px solid #FFCC80;
+    padding-top: 20px;
+    text-align: center;
+}
+
+.copyright {
+    color: #ffffff;
+    margin: 0;
+}
+
+@media (max-width: 768px) {
+    .footer-content {
+        grid-template-columns: 1fr;
+    }
+
+    .footer-contact {
+        grid-column: auto;
+    }
+}
+</style>

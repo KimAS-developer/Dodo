@@ -147,7 +147,7 @@ def update_order_status(order_id):
     new_status = request.json.get('status')
 
     # Базовые допустимые статусы
-    valid_statuses = ['processing', 'cooking', 'ready']
+    valid_statuses = ['processing', 'cooking', 'ready', 'courier']
 
     # Добавляем финальный статус в зависимости от типа доставки
     final_status = order.get_final_status()

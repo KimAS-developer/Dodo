@@ -1,30 +1,203 @@
-<header class="p-3 mb-3 border-bottom">
-    <div class="container">
-        <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
-            <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
-                <li><a href="/" class="nav-link px-2 link-secondary">Главная</a></li>
-                <li><a href="#" class="nav-link px-2 link-dark">О нас</a></li>
-                <li><a href="#" class="nav-link px-2 link-dark">Контакты</a></li>
-            </ul>
+<header class="site-header">
+    <div class="header-container">
+        <div class="header-content">
+            <div class="left-section">
+                <a href="/" class="header-logo">
+                    <span class="logo-text">Dodoooo Pizza</span>
+                </a>
+                <nav class="header-nav">
+                    <div class="nav-center">
+                        <a href="/" class="nav-link">Главная</a>
+                        <a href="#" class="nav-link">О нас</a>
+                        <a href="#" class="nav-link">Контакты</a>
+                    </div>
+                </nav>
+            </div>
 
-            <!-- Кнопка входа/профиля справа -->
-            <div class="text-end">
+            <div class="user-actions">
                 {% if current_user.is_authenticated %}
-                {% if current_user.is_client() %}
-                <a href="/orders" class="btn btn-outline-secondary me-2">Мои заказы</a>
-                <a href="/history" class="btn btn-outline-secondary me-2">История заказов</a>
-                <a href="/cart" class="btn btn-outline-secondary me-2">Корзина</a>
-                <a href="/profile" class="btn btn-outline-secondary me-2">Профиль</a>
-                <a href="/logout" class="btn btn-outline-danger">Выйти</a>
-                {% elif current_user.is_cook() %}
-                <a href="/orders" class="btn btn-outline-secondary me-2">Заказы</a>
-                <a href="/history" class="btn btn-outline-secondary me-2">История заказов</a>
-                <a href="/logout" class="btn btn-outline-danger">Выйти</a>
-                {% endif %}
+                    {% if current_user.is_client() %}
+                        <a href="/cart" class="action-btn cart-btn">Корзина</a>
+                        <a href="/orders" class="action-btn orders-btn">Мои заказы</a>
+                        <a href="/history" class="action-btn orders-btn">История заказов</a>
+                        <a href="/profile" class="action-btn profile-btn">Профиль</a>
+                        <a href="/logout" class="action-btn logout-btn">Выйти</a>
+                    {% elif current_user.is_cook() %}
+                        <a href="/orders" class="action-btn orders-btn">Заказы</a>
+                        <a href="/logout" class="action-btn logout-btn">Выйти</a>
+                    {% endif %}
                 {% else %}
-                <a href="/auth" class="btn btn-outline-primary me-2">Войти</a>
+                    <a href="/auth" class="action-btn login-btn">Войти</a>
                 {% endif %}
             </div>
         </div>
     </div>
 </header>
+
+<style>
+/* HEADER STYLES */
+.site-header {
+    background: white;
+    box-shadow: 0 2px 15px rgba(233, 107, 0, 0.1);
+    padding: 15px 40px;
+    position: relative;
+    z-index: 100;
+    height: 70px;
+}
+
+.header-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    height: 100%;
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 100%;
+}
+
+.left-section {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+}
+
+.header-logo {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #FF6B00;
+    text-decoration: none;
+}
+
+.header-nav {
+    display: flex;
+}
+
+.nav-center {
+    display: flex;
+    gap: 25px;
+}
+
+.nav-link {
+    color: #333;
+    text-decoration: none;
+    font-weight: 500;
+    padding: 8px 0;
+    position: relative;
+    transition: color 0.3s;
+}
+
+.nav-link:hover {
+    color: #FF6B00;
+}
+
+.nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: #FF6B00;
+    transition: width 0.3s;
+}
+
+.nav-link:hover::after {
+    width: 100%;
+}
+
+.user-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.action-btn {
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.3s;
+    font-size: 0.95rem;
+    white-space: nowrap;
+    border: none;
+}
+
+.login-btn {
+    background: #FF6B00;
+    color: white;
+}
+
+.login-btn:hover {
+    background: #E65100;
+    transform: translateY(-2px);
+}
+
+.cart-btn,
+.orders-btn,
+.profile-btn {
+    background: #f96700;
+    color: #ffffff;
+}
+
+.cart-btn:hover,
+.orders-btn:hover,
+.profile-btn:hover {
+    background: #e86100;
+}
+
+.logout-btn {
+    background: #ff3838;
+    color: #ffffff;
+    border: 1px solid #FFCDD2;
+}
+
+.logout-btn:hover {
+    background: #e63535;
+}
+
+@media (max-width: 1200px) {
+    .site-header {
+        padding: 15px 20px;
+    }
+
+    .left-section {
+        gap: 20px;
+    }
+
+    .nav-center {
+        gap: 15px;
+    }
+}
+
+@media (max-width: 992px) {
+    .header-nav {
+        display: none;
+    }
+}
+
+@media (max-width: 768px) {
+    .header-content {
+        flex-direction: column;
+        gap: 10px;
+        padding: 10px 0;
+    }
+
+    .left-section {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .user-actions {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .action-btn {
+        padding: 6px 12px;
+        font-size: 0.85rem;
+    }
+}
+</style>

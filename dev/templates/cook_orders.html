@@ -116,6 +116,11 @@
         background-color: #e6f4ea;
     }
 
+    .status-courier {
+        color: #673ab7;
+        background-color: #ede7f6;
+    }
+
     .status-delivered {
         color: #34a853;
         background-color: #e6f4ea;
@@ -398,18 +403,16 @@
                 {% endfor %}
             </div>
 
-            <!-- В блоке order-actions замените текущий код на этот: -->
             <div class="order-actions">
                 {% if order.status not in ['delivered', 'received', 'canceled'] %}
                 <form class="status-form" data-order-id="{{ order.id }}">
                     <select name="status" class="status-select">
-                        <option value="processing" {% if order.status=='processing' %}selected{% endif %}>В обработке
-                        </option>
+                        <option value="processing" {% if order.status=='processing' %}selected{% endif %}>В обработке</option>
                         <option value="cooking" {% if order.status=='cooking' %}selected{% endif %}>Готовится</option>
                         <option value="ready" {% if order.status=='ready' %}selected{% endif %}>Готово</option>
                         {% if order.delivery_type == 'delivery' %}
-                        <option value="delivered" {% if order.status=='delivered' %}selected{% endif %}>Доставлен
-                        </option>
+                        <option value="courier" {% if order.status=='courier' %}selected{% endif %}>Передан курьеру</option>
+                        <option value="delivered" {% if order.status=='delivered' %}selected{% endif %}>Доставлен</option>
                         {% else %}
                         <option value="received" {% if order.status=='received' %}selected{% endif %}>Получен</option>
                         {% endif %}
@@ -451,6 +454,7 @@
                     'processing': 'В обработке',
                     'cooking': 'Готовится',
                     'ready': 'Готово',
+                    'courier': 'Передан курьеру',
                     'delivered': 'Доставлен',
                     'received': 'Получен'
                 }[select.value];

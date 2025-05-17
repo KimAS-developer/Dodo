@@ -79,6 +79,7 @@ class Order(db.Model):
             'processing': 'В обработке',
             'cooking': 'Готовится',
             'ready': 'Готово',
+            'courier': 'Передан курьеру',
             'delivered': 'Доставлен',
             'received': 'Получен',
             'canceled': 'Отменен'
