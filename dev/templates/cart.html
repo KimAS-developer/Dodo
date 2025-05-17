@@ -618,24 +618,28 @@
         }
 
         async handleCheckout() {
-            try {
-                const deliveryType = document.querySelector('input[name="delivery"]:checked').value;
-                const data = {
-                    delivery_type: deliveryType,
-                    restaurant_id: deliveryType === 'pickup'
-                        ? document.getElementById('restaurant').value
-                        : null,
-                    address: deliveryType === 'delivery'
-                        ? document.getElementById('address').value
-                        : null
-                };
+    try {
+        const deliveryType = document.querySelector('input[name="delivery"]:checked').value;
+        const paymentMethod = document.querySelector('input[name="payment"]:checked').value;
+        const restaurantId = document.getElementById('restaurant').value;
+        const address = document.getElementById('address').value;
 
-                const response = await this.sendRequest('/api/cart/checkout', 'POST', data);
-                window.location.href = `/orders/${response.order_id}`;
-            } catch (error) {
-                this.showError(error);
-            }
+        const data = {
+            delivery_type: deliveryType,
+            payment_method: paymentMethod,
+            restaurant_id: deliveryType === 'pickup' ? restaurantId : null,
+            address: deliveryType === 'delivery' ? address : null
+        };
+
+        const response = await this.sendRequest('/api/cart/checkout', 'POST', data);
+
+        if (response.redirect) {
+            window.location.href = response.redirect;  // Проблема здесь - response.redirect содержит неверный endpoint
         }
+    } catch (error) {
+        this.showError(error);
+    }
+}
     }
 
     document.addEventListener('DOMContentLoaded', () => {

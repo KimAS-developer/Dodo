@@ -4,36 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3e3920ed-dc65-42d2-a282-7487a06da7be" name="Changes" comment="init">
-      <change afterPath="$PROJECT_DIR$/.idea/Dodo.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/dev/controller/cartController.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/dev/controller/orderController.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/dev/domain/cart.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/dev/domain/order.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/dev/templates/auth.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/dev/templates/baseTemplates/basePageWithoutHeader.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/dev/templates/cart.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/dev/templates/client_orders.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/dev/templates/cook_orders.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/dev/templates/order_detail.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dev/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/dev/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dev/config_db.py" beforeDir="false" afterPath="$PROJECT_DIR$/dev/config_db.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dev/controller/authController.py" beforeDir="false" afterPath="$PROJECT_DIR$/dev/controller/authController.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dev/controller/mainPageController.py" beforeDir="false" afterPath="$PROJECT_DIR$/dev/controller/mainPageController.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dev/domain/desert.py" beforeDir="false" afterPath="$PROJECT_DIR$/dev/domain/desert.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dev/domain/drink.py" beforeDir="false" afterPath="$PROJECT_DIR$/dev/domain/drink.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dev/domain/ingredient.py" beforeDir="false" afterPath="$PROJECT_DIR$/dev/domain/ingredient.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dev/domain/pizza.py" beforeDir="false" afterPath="$PROJECT_DIR$/dev/domain/pizza.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dev/domain/pizza_ingredient.py" beforeDir="false" afterPath="$PROJECT_DIR$/dev/domain/pizza_ingredient.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dev/domain/user.py" beforeDir="false" afterPath="$PROJECT_DIR$/dev/domain/user.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dev/extensions.py" beforeDir="false" afterPath="$PROJECT_DIR$/dev/extensions.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dev/templates/baseTemplates/_footer.html" beforeDir="false" afterPath="$PROJECT_DIR$/dev/templates/baseTemplates/_footer.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dev/templates/baseTemplates/_header.html" beforeDir="false" afterPath="$PROJECT_DIR$/dev/templates/baseTemplates/_header.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dev/templates/mainPage.html" beforeDir="false" afterPath="$PROJECT_DIR$/dev/templates/mainPage.html" afterDir="false" />
+    <list default="true" id="3e3920ed-dc65-42d2-a282-7487a06da7be" name="Changes" comment="fixed Cart">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/controller/orderController.py" beforeDir="false" afterPath="$PROJECT_DIR$/dev/controller/orderController.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/domain/order.py" beforeDir="false" afterPath="$PROJECT_DIR$/dev/domain/order.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/templates/cart.html" beforeDir="false" afterPath="$PROJECT_DIR$/dev/templates/cart.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/templates/client_orders.html" beforeDir="false" afterPath="$PROJECT_DIR$/dev/templates/client_orders.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/templates/order_detail.html" beforeDir="false" afterPath="$PROJECT_DIR$/dev/templates/order_detail.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -174,7 +151,15 @@
       <option name="project" value="LOCAL" />
       <updated>1745263915459</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="fixed Cart">
+      <option name="closed" value="true" />
+      <created>1747423347190</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1747423347191</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -190,6 +175,7 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="init" />
-    <option name="LAST_COMMIT_MESSAGE" value="init" />
+    <MESSAGE value="fixed Cart" />
+    <option name="LAST_COMMIT_MESSAGE" value="fixed Cart" />
   </component>
 </project>
