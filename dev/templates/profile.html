@@ -1,0 +1,211 @@
+{% extends 'baseTemplates/basePageWithoutHeader.html' %}
+{% block title %}Профиль{% endblock %}
+{% block content %}
+<div class="profile-container">
+    <!-- Добавляем блок для flash-сообщений -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="flash-messages">
+                {% for category, message in messages %}
+                    <div class="flash-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <div class="profile-header">
+        <h1>Ваш профиль</h1>
+        <div class="profile-icon">🍕</div>
+    </div>
+
+    <form method="POST" class="profile-form">
+        <!-- Остальная часть формы остается без изменений -->
+        <div class="form-group">
+            <label for="name">Имя</label>
+            <input type="text" id="name" value="{{ user.name }}" readonly>
+        </div>
+
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" value="{{ user.email }}" required>
+        </div>
+
+        <div class="form-group">
+            <label for="phone">Телефон</label>
+            <input type="tel" id="phone" name="phone" value="{{ user.phone }}" required>
+        </div>
+
+        <div class="form-group">
+            <label for="new_password">Новый пароль</label>
+            <input type="password" id="new_password" name="new_password"
+                   placeholder="Минимум 6 символов, буквы и цифры">
+            <div class="password-hint">
+                Пароль должен содержать не менее 6 символов, включая буквы и цифры
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="save-btn">Сохранить изменения</button>
+            <a href="{{ url_for('mainPage.index') }}" class="cancel-btn">Отмена</a>
+        </div>
+    </form>
+</div>
+
+<style>
+/* Стили профиля */
+.profile-container {
+    max-width: 600px;
+    margin: 40px auto;
+    padding: 30px;
+    background: #FFF9F2;
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(255, 107, 0, 0.1);
+}
+
+/* Добавляем стили для flash-сообщений */
+.flash-messages {
+    margin-bottom: 20px;
+}
+
+.flash-error {
+    padding: 10px 15px;
+    background-color: #FFEBEE;
+    color: #C62828;
+    border: 1px solid #EF9A9A;
+    border-radius: 4px;
+    margin-bottom: 10px;
+}
+
+.flash-success {
+    padding: 10px 15px;
+    background-color: #E8F5E9;
+    color: #2E7D32;
+    border: 1px solid #A5D6A7;
+    border-radius: 4px;
+    margin-bottom: 10px;
+}
+
+.profile-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 30px;
+    border-bottom: 2px solid #FFE0B2;
+    padding-bottom: 15px;
+}
+
+.profile-header h1 {
+    color: #E65100;
+    margin: 0;
+    font-size: 28px;
+}
+
+.profile-icon {
+    font-size: 40px;
+    color: #FF6B00;
+}
+
+.profile-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-group label {
+    font-weight: 600;
+    color: #5D4037;
+}
+
+.form-group input {
+    padding: 12px 15px;
+    border: 1px solid #FFCC80;
+    border-radius: 8px;
+    font-size: 16px;
+    background: white;
+    transition: all 0.3s;
+}
+
+.password-hint {
+    font-size: 12px;
+    color: #9E9E9E;
+    margin-top: 4px;
+}
+
+.form-group input:focus {
+    border-color: #FF6B00;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(255, 107, 0, 0.2);
+}
+
+.form-group input[readonly] {
+    background: #F5F5F5;
+    color: #757575;
+}
+
+.form-actions {
+    display: flex;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.save-btn {
+    background: #FF6B00;
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s;
+    flex: 1;
+}
+
+.save-btn:hover {
+    background: #E65100;
+}
+
+.cancel-btn {
+    background: #F5F5F5;
+    color: #757575;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s;
+    text-align: center;
+    text-decoration: none;
+    flex: 1;
+}
+
+.cancel-btn:hover {
+    background: #E0E0E0;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .profile-container {
+        margin: 20px;
+        padding: 20px;
+    }
+    
+    .profile-header {
+        flex-direction: column;
+        gap: 10px;
+        text-align: center;
+    }
+    
+    .form-actions {
+        flex-direction: column;
+    }
+}
+</style>
+{% endblock %}

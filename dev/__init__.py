@@ -30,6 +30,9 @@ def create_app(config_class=Config_db):
     from controller.orderController import orders_bp
     app.register_blueprint(orders_bp)
 
+    from controller.profileController import profile_bp
+    app.register_blueprint(profile_bp)
+
     with app.app_context():
         # Убедитесь, что все модели импортированы до этой строки
         db.configure_mappers()  # Важно!
