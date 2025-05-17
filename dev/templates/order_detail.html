@@ -1,7 +1,0 @@
-{% extends 'baseTemplates/basePageWithoutHeader.html' %}
-{% block title %}Заказ #{{ order.id }}{% endblock %}
-{% block content %}
-<!-- Аналогично client_orders.html, но для одного заказа -->
-<a href="{{ url_for('orders.view_order', order_id=order.id) }}">← Вернуться к списку заказов</a>
-<!-- Остальное как в client_orders.html для одного заказа -->
-{% endblock %}

@@ -4,160 +4,165 @@
     <meta charset="UTF-8">
     <title>Авторизация</title>
     <style>
-        * {
-            box-sizing: border-box;
-            font-family: 'Arial', sans-serif;
-        }
+    * {
+        box-sizing: border-box;
+        font-family: 'Lora', serif;
+    }
 
-        body {
-            background: #f8f1e5;
-            margin: 0;
-            padding: 20px;
-        }
+    body {
+        background: #FFFFFF;
+        margin: 0;
+        padding: 20px;
+    }
 
-        .form-container {
-            max-width: 500px;
-            margin: 40px auto;
-            background: white;
-            padding: 40px;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(230, 126, 34, 0.1);
-        }
+    .form-container {
+        max-width: 600px;
+        margin: 40px auto;
+        background: #FFFFFF;
+        padding: 40px;
+        border-radius: 12px;
+        box-shadow: 0 6px 18px rgba(255, 107, 0, 0.1);
+    }
 
-        .tab-group {
-            display: flex;
-            list-style: none;
-            padding: 0;
-            margin: 0 0 30px 0;
-        }
+    .tab-group {
+        display: flex;
+        list-style: none;
+        padding: 0;
+        margin: 0 0 30px 0;
+    }
 
-        .tab {
-            flex: 1;
-            text-align: center;
-        }
+    .tab {
+        flex: 1;
+        text-align: center;
+    }
 
-        .tab a {
-            display: block;
-            padding: 15px;
-            background: rgba(230, 126, 34, 0.1);
-            color: #e67e22;
-            text-decoration: none;
-            transition: all 0.3s;
-            border-radius: 5px 5px 0 0;
-        }
+    .tab a {
+        display: block;
+        padding: 15px;
+        background: rgba(255, 107, 0, 0.1);
+        color: #FF6B00;
+        text-decoration: none;
+        transition: all 0.3s;
+        border-radius: 6px 6px 0 0;
+        font-size: 16px;
+    }
 
-        .tab.active a {
-            background: #e67e22;
-            color: white;
-        }
+    .tab.active a {
+        background: #FF6B00;
+        color: white;
+    }
 
-        .form-title {
-            text-align: center;
-            color: #e67e22;
-            margin-bottom: 30px;
-        }
+    .form-title {
+        text-align: center;
+        color: #4A2C00;
+        margin-bottom: 30px;
+        font-size: 28px;
+        font-weight: 700;
+    }
 
-        .field-wrap {
-            position: relative;
-            margin-bottom: 30px;
-        }
+    .field-wrap {
+        position: relative;
+        margin-bottom: 30px;
+    }
 
-        label {
-            position: absolute;
-            left: 15px;
-            top: 15px;
-            color: #999;
-            transition: all 0.3s;
-            pointer-events: none;
-            font-size: 16px;
-        }
+    label {
+        position: absolute;
+        left: 15px;
+        top: 15px;
+        color: #A66B2E;
+        transition: all 0.3s;
+        pointer-events: none;
+        font-size: 16px;
+    }
 
-        input {
-            width: 100%;
-            padding: 15px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 16px;
-            transition: all 0.3s;
-        }
+    input {
+        width: 100%;
+        padding: 15px;
+        border: 1px solid #FFE8D6;
+        border-radius: 6px;
+        font-size: 16px;
+        transition: all 0.3s;
+        background: #FFFFFF;
+    }
 
-        input:focus {
-            outline: none;
-            border-color: #e67e22;
-        }
+    input:focus {
+        outline: none;
+        border-color: #FF6B00;
+        box-shadow: 0 0 0 2px rgba(255, 107, 0, 0.2);
+    }
 
-        input:focus + label,
-        input:not(:placeholder-shown) + label {
-            transform: translateY(-25px);
-            font-size: 12px;
-            color: #e67e22;
-            background: white;
-            padding: 0 5px;
-        }
+    input:focus + label,
+    input:not(:placeholder-shown) + label {
+        transform: translateY(-25px);
+        font-size: 12px;
+        color: #FF6B00;
+        background: #FFFFFF;
+        padding: 0 5px;
+    }
 
-        .req {
-            color: #e67e22;
-        }
+    .req {
+        color: #FF6B00;
+    }
 
-        .submit-btn {
-            width: 100%;
-            padding: 15px;
-            background: #e67e22;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
+    .submit-btn {
+        width: 100%;
+        padding: 15px;
+        background: #FF6B00;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: all 0.3s;
+        font-weight: 600;
+    }
 
-        .submit-btn:hover {
-            background: #d35400;
-        }
+    .submit-btn:hover {
+        background: #E65A00;
+    }
 
-        /* Изначально скрываем обе формы */
-        #signup {
-            display: none;
-        }
+    #signup {
+        display: none;
+    }
 
-        #login {
-            display: none;
-        }
+    #login {
+        display: none;
+    }
 
-        .alert {
-            padding: 10px 15px;
-            margin-bottom: 20px;
-            border-radius: 4px;
-            font-size: 14px;
-            display: none;
-        }
+    .alert {
+        padding: 10px 15px;
+        margin-bottom: 20px;
+        border-radius: 4px;
+        font-size: 14px;
+        display: none;
+    }
 
-        .alert-error {
-            background-color: #fdecea;
-            color: #e74c3c;
-            border: 1px solid #e74c3c;
-        }
+    .alert-error {
+        background-color: #FFEBEE;
+        color: #C62828;
+        border: 1px solid #EF9A9A;
+    }
 
-        .alert-success {
-            background-color: #e8f5e9;
-            color: #2ecc71;
-            border: 1px solid #2ecc71;
-        }
+    .alert-success {
+        background-color: #E8F5E9;
+        color: #2E7D32;
+        border: 1px solid #A5D6A7;
+    }
 
-        .password-hint {
-            font-size: 12px;
-            color: #666;
-            margin-top: 5px;
-            margin-bottom: 10px;
-            display: none;
-        }
+    .password-hint {
+        font-size: 12px;
+        color: #A66B2E;
+        margin-top: 5px;
+        margin-bottom: 10px;
+        display: none;
+    }
 
-        .password-match {
-            font-size: 12px;
-            margin-top: 5px;
-            display: none;
-        }
-    </style>
+    .password-match {
+        font-size: 12px;
+        margin-top: 5px;
+        display: none;
+    }
+</style>
 </head>
 <body>
     <div class="form-container">
@@ -317,7 +322,7 @@
             const hint = document.getElementById('password-hint');
             if (value.length > 0 && !isPasswordValid(value)) {
                 hint.style.display = 'block';
-                hint.style.color = '#e74c3c';
+                hint.style.color = '#C62828';
             } else {
                 hint.style.display = 'none';
             }
@@ -343,11 +348,11 @@
 
             if (password !== confirmPassword) {
                 message.textContent = "Пароли не совпадают!";
-                message.style.color = "#e74c3c";
+                message.style.color = "#C62828";
                 return false;
             } else {
                 message.textContent = "Пароли совпадают!";
-                message.style.color = "#2ecc71";
+                message.style.color = "#2E7D32";
                 return true;
             }
         }
@@ -359,7 +364,7 @@
 
             if (!isPasswordValid(password)) {
                 document.getElementById('password-hint').style.display = 'block';
-                document.getElementById('password-hint').style.color = '#e74c3c';
+                document.getElementById('password-hint').style.color = '#C62828';
 
                 const alertElement = document.getElementById('signup-alert');
                 alertElement.textContent = "Пароль должен быть не менее 6 символов и содержать буквы и цифры";

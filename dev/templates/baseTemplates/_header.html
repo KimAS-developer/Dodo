@@ -2,14 +2,16 @@
     <div class="header-container">
         <div class="header-content">
             <div class="left-section">
-                <a href="/" class="header-logo">
+                <a href="{% if current_user.is_authenticated and current_user.is_cook() %}/orders{% else %}/{% endif %}" class="header-logo">
+                    <span class="logo-icon">🍕</span>
                     <span class="logo-text">Dodoooo Pizza</span>
                 </a>
                 <nav class="header-nav">
                     <div class="nav-center">
-                        <a href="/" class="nav-link">Главная</a>
+                    {% if current_user.is_client() %}
                         <a href="#" class="nav-link">О нас</a>
                         <a href="#" class="nav-link">Контакты</a>
+                    {% endif %}
                     </div>
                 </nav>
             </div>
@@ -23,6 +25,7 @@
                         <a href="/profile" class="action-btn profile-btn">Профиль</a>
                         <a href="/logout" class="action-btn logout-btn">Выйти</a>
                     {% elif current_user.is_cook() %}
+                        <a href="/history" class="action-btn orders-btn">История заказов</a>
                         <a href="/orders" class="action-btn orders-btn">Заказы</a>
                         <a href="/logout" class="action-btn logout-btn">Выйти</a>
                     {% endif %}
@@ -61,14 +64,27 @@
 .left-section {
     display: flex;
     align-items: center;
-    gap: 40px;
+    gap: 20px;
 }
 
 .header-logo {
-    font-size: 1.8rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 2rem;
+    font-family: 'Lora', serif;
     font-weight: 700;
     color: #FF6B00;
     text-decoration: none;
+}
+
+.logo-icon {
+    font-size: 1em;
+}
+
+.logo-text {
+    font-size: 1em;
+    font-family: 'Lora', serif;
 }
 
 .header-nav {
@@ -83,25 +99,17 @@
 .nav-link {
     color: #333;
     text-decoration: none;
+    font-family: 'Lora', serif;
     font-weight: 500;
-    padding: 8px 0;
+    font-size: 1.2rem;
+    padding: 8px 0 0 0;
     position: relative;
     transition: color 0.3s;
 }
 
 .nav-link:hover {
-    color: #FF6B00;
-}
 
-.nav-link::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 0;
-    height: 2px;
-    background: #FF6B00;
-    transition: width 0.3s;
+    color: #FF6B00;
 }
 
 .nav-link:hover::after {
@@ -118,9 +126,10 @@
     padding: 8px 15px;
     border-radius: 20px;
     font-weight: 500;
+    font-family: 'Lora', serif;
     text-decoration: none;
     transition: all 0.3s;
-    font-size: 0.95rem;
+    font-size: 1rem;
     white-space: nowrap;
     border: none;
 }
@@ -164,7 +173,7 @@
     }
 
     .left-section {
-        gap: 20px;
+        gap: 15px;
     }
 
     .nav-center {
@@ -198,6 +207,7 @@
     .action-btn {
         padding: 6px 12px;
         font-size: 0.85rem;
+        font-family: 'Lora', serif;
     }
 }
 </style>

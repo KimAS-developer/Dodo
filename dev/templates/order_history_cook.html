@@ -1,5 +1,5 @@
-{% extends 'baseTemplates/basePageWithoutNavbar.html' %}
-{% block title %}Мои заказы{% endblock %}
+{% extends 'baseTemplates/basePageWithoutNavbarAndFooter.html' %}
+{% block title %}История заказов{% endblock %}
 {% block content %}
 <style>
     .orders-section {
@@ -54,6 +54,50 @@
         font-weight: normal;
     }
 
+    .order-status {
+        display: inline-block;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 1.08rem; /* 0.9 * 1.2 */
+    }
+
+    /* Цвета статусов в оранжевой гамме с сохранением зелёного для завершённых */
+    .status-processing {
+        color: #FF6B00;
+        background-color: #FFF8F0;
+    }
+
+    .status-cooking {
+        color: #FF6B00;
+        background-color: #FFF8F0;
+    }
+
+    .status-ready {
+        color: #388E3C;
+        background-color: #C8E6C9;
+    }
+
+    .status-courier {
+        color: #FF6B00;
+        background-color: #FFF8F0;
+    }
+
+    .status-delivered {
+        color: #689F38;
+        background-color: #DCEDC8;
+    }
+
+    .status-received {
+        color: #689F38;
+        background-color: #DCEDC8;
+    }
+
+    .status-canceled {
+        color: #D32F2F;
+        background-color: #FFCDD2;
+    }
+
     .order-meta {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -76,50 +120,6 @@
         color: #4A2C00;
     }
 
-    .order-status {
-        display: inline-block;
-        padding: 0.5rem 1rem;
-        border-radius: 20px;
-        font-weight: 600;
-        font-size: 1.08rem; /* 0.9 * 1.2 */
-    }
-
-    /* Цвета статусов */
-    .status-processing {
-        color: #FF6B00;
-        background-color: #FFF8F0;
-    }
-
-    .status-cooking {
-        color: #FF6B00;
-        background-color: #FFF8F0;
-    }
-
-    .status-ready {
-        color: #FF6B00;
-        background-color: #FFF8F0;
-    }
-
-    .status-courier {
-        color: #FF6B00;
-        background-color: #FFF8F0;
-    }
-
-    .status-delivered {
-        color: #FF6B00;
-        background-color: #FFF8F0;
-    }
-
-    .status-received {
-        color: #FF6B00;
-        background-color: #FFF8F0;
-    }
-
-    .status-canceled {
-        color: #FF6B00;
-        background-color: #FFF8F0;
-    }
-
     .order-items {
         margin-top: 1.5rem;
     }
@@ -130,7 +130,6 @@
         padding: 1rem;
         margin-bottom: 1rem;
         border-radius: 8px;
-        transition: background 0.2s;
     }
 
     .item-image {
@@ -174,54 +173,6 @@
         display: inline-block;
         margin-right: 1rem;
         margin-bottom: 0.3rem;
-    }
-
-    .order-actions {
-        display: flex;
-        justify-content: flex-end;
-        gap: 1rem;
-        margin-top: 1.5rem;
-        padding-top: 1.5rem;
-        border-top: 1px solid #FFE8D6;
-    }
-
-    .action-status-btn {
-        padding: 0.7rem 1.5rem;
-        border: 1px solid #FF6B00;
-        border-radius: 6px;
-        cursor: pointer;
-        font-size: 1.14rem; /* 0.95 * 1.2 */
-        font-weight: 500;
-        transition: all 0.2s;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        background: #FFFFFF; /* Белый фон для кнопки */
-        color: #FF6B00;
-    }
-
-    .action-status-btn:hover:not(:disabled) {
-        background: #FF6B00;
-        color: #FFFFFF;
-        border-color: #FF6B00;
-    }
-
-    .cancel-btn {
-        background: #FFFFFF;
-        color: #FF6B00;
-        border: 1px solid #FF6B00;
-    }
-
-    .cancel-btn:hover:not(:disabled) {
-        background: #FF6B00;
-        color: #FFFFFF;
-    }
-
-    .cancel-btn:disabled {
-        background: #F5F5F5;
-        color: #9E9E9E;
-        border-color: #D0D0D0;
-        cursor: not-allowed;
     }
 
     .empty-orders {
@@ -283,26 +234,16 @@
             height: auto;
             max-height: 200px;
         }
-
-        .order-actions {
-            flex-direction: column;
-            gap: 0.8rem;
-        }
-
-        .action-status-btn, .primary-btn {
-            width: 100%;
-            justify-content: center;
-        }
     }
 </style>
 
 <section class="orders-section">
-    <h2 class="section-title">Мои заказы</h2>
+    <h2 class="section-title">История заказов</h2>
 
     <div class="orders-list">
         {% if orders %}
         {% for order in orders %}
-        <div class="order-card" data-id="{{ order.id }}">
+        <div class="order-card">
             <div class="order-header">
                 <h3 class="order-title">Заказ <span class="order-id">#{{ order.id }}</span></h3>
                 <div class="order-status status-{{ order.status }}">
@@ -382,16 +323,6 @@
                 </div>
                 {% endfor %}
             </div>
-
-            <div class="order-actions">
-                {% if order.status not in ['canceled', 'delivered', 'received'] %}
-                <button class="action-status-btn cancel-btn"
-                        {% if order.status == 'canceled'%}disabled{% endif %}>
-                    <i class="fas fa-times"></i>
-                    {% if order.status == 'canceled' %}Отменен{% else %}Отменить заказ{% endif %}
-                </button>
-                {% endif %}
-            </div>
         </div>
         {% endfor %}
         {% else %}
@@ -399,7 +330,7 @@
             <div class="empty-icon">
                 <i class="fas fa-box-open"></i>
             </div>
-            <p class="empty-text">У вас пока нет активных заказов</p>
+            <p class="empty-text">Нет завершенных заказов</p>
             <a href="{{ url_for('mainPage.index') }}" class="primary-btn">
                 <i class="fas fa-utensils"></i> Вернуться в меню
             </a>
@@ -407,113 +338,4 @@
         {% endif %}
     </div>
 </section>
-
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        // Обработка отмены заказа
-        document.querySelectorAll('.cancel-btn:not(:disabled)').forEach(btn => {
-            btn.addEventListener('click', async function() {
-                if (!confirm('Вы действительно хотите отменить этот заказ?')) return;
-
-                const orderCard = this.closest('.order-card');
-                const orderId = orderCard.dataset.id;
-
-                // Блокируем кнопку на время выполнения запроса
-                this.disabled = true;
-                const originalText = this.innerHTML;
-                this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Обработка...';
-
-                try {
-                    const response = await fetch(`/orders/${orderId}/cancel`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]')?.content || ''
-                        }
-                    });
-
-                    if (!response.ok) {
-                        throw new Error('Ошибка при отмене заказа');
-                    }
-
-                    const data = await response.json();
-
-                    if (data.status === 'success') {
-                        // Плавно удаляем карточку заказа
-                        orderCard.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
-                        orderCard.style.opacity = '0';
-                        orderCard.style.transform = 'translateX(-100px)';
-
-                        setTimeout(() => {
-                            orderCard.remove();
-
-                            // Если это был последний заказ, показываем сообщение
-                            if (document.querySelectorAll('.order-card').length === 0) {
-                                document.querySelector('.orders-list').innerHTML = `
-                                    <div class="empty-orders">
-                                        <div class="empty-icon">
-                                            <i class="fas fa-box-open"></i>
-                                        </div>
-                                        <p class="empty-text">У вас пока нет активных заказов</p>
-                                        <a href="{{ url_for('mainPage.index') }}" class="primary-btn">
-                                            <i class="fas fa-utensils"></i> Вернуться в меню
-                                        </a>
-                                    </div>
-                                `;
-                            }
-                        }, 300);
-
-                        // Показываем уведомление
-                        showAlert('Заказ успешно отменен', 'success');
-                    } else {
-                        throw new Error(data.message || 'Ошибка при отмене заказа');
-                    }
-                } catch (error) {
-                    console.error('Error:', error);
-                    showAlert(error.message || 'Произошла ошибка', 'error');
-                    this.disabled = false;
-                    this.innerHTML = originalText;
-                }
-            });
-        });
-
-        function showAlert(message, type = 'success') {
-            const alert = document.createElement('div');
-            alert.className = `alert alert-${type}`;
-            alert.style.position = 'fixed';
-            alert.style.top = '20px';
-            alert.style.right = '20px';
-            alert.style.padding = '1rem 1.5rem';
-            alert.style.borderRadius = '6px';
-            alert.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
-            alert.style.backgroundColor = type === 'success' ? '#34a853' : '#d93025';
-            alert.style.color = 'white';
-            alert.style.zIndex = '1000';
-            alert.style.animation = 'fadeIn 0.3s';
-            alert.textContent = message;
-
-            document.body.appendChild(alert);
-
-            setTimeout(() => {
-                alert.style.animation = 'fadeOut 0.3s';
-                setTimeout(() => alert.remove(), 300);
-            }, 3000);
-        }
-
-        // Проверяем при загрузке, нет ли активных заказов
-        if (document.querySelectorAll('.order-card').length === 0) {
-            document.querySelector('.orders-list').innerHTML = `
-                <div class="empty-orders">
-                    <div class="empty-icon">
-                        <i class="fas fa-box-open"></i>
-                    </div>
-                    <p class="empty-text">У вас пока нет активных заказов</p>
-                    <a href="{{ url_for('mainPage.index') }}" class="primary-btn">
-                        <i class="fas fa-utensils"></i> Вернуться в меню
-                    </a>
-                </div>
-            `;
-        }
-    });
-</script>
 {% endblock %}

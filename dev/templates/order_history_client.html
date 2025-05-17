@@ -1,21 +1,22 @@
-{% extends 'baseTemplates/basePageWithoutHeader.html' %}
+{% extends 'baseTemplates/basePageWithoutNavbar.html' %}
 {% block title %}История заказов{% endblock %}
 {% block content %}
 <style>
-
     .orders-section {
         padding: 2rem;
         max-width: 1200px;
         margin: 0 auto;
-        font-family: 'Roboto', sans-serif;
+        font-family: 'Lora', serif;
+        background: #FFFFFF; /* Белый фон */
     }
 
     .section-title {
         text-align: center;
         margin-bottom: 2rem;
-        color: #333;
-        font-size: 2rem;
+        color: #4A2C00;
+        font-size: 2.64rem; /* 2.2 * 1.2 */
         font-weight: 700;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
     }
 
     .orders-list {
@@ -25,12 +26,12 @@
     }
 
     .order-card {
-        background: #fff;
+        background: #FFFFFF;
         padding: 1.5rem;
         border-radius: 12px;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
         transition: all 0.3s ease;
-        border: 1px solid #eee;
+        /* Рамка убрана */
     }
 
     .order-header {
@@ -39,17 +40,17 @@
         align-items: center;
         margin-bottom: 1rem;
         padding-bottom: 1rem;
-        border-bottom: 1px solid #f0f0f0;
+        border-bottom: 1px solid #FFE8D6; /* Светло-оранжевая граница */
     }
 
     .order-title {
-        font-size: 1.3rem;
+        font-size: 1.56rem; /* 1.3 * 1.2 */
         margin: 0;
-        color: #333;
+        color: #4A2C00;
     }
 
     .order-id {
-        color: #666;
+        color: #A66B2E;
         font-weight: normal;
     }
 
@@ -58,45 +59,44 @@
         padding: 0.5rem 1rem;
         border-radius: 20px;
         font-weight: 600;
-        font-size: 0.9rem;
+        font-size: 1.08rem; /* 0.9 * 1.2 */
     }
 
-    /* Цвета статусов */
-    /* Обновленные цвета статусов в оранжевой гамме */
-.status-processing {
-    color: #E67C00; /* теплый оранжевый */
-    background-color: #FFE0B2; /* светлый оранжевый фон */
-}
+    /* Цвета статусов в оранжевой гамме с сохранением зелёного для завершённых */
+    .status-processing {
+        color: #FF6B00;
+        background-color: #FFF8F0;
+    }
 
-.status-cooking {
-    color: #F57C00; /* насыщенный оранжевый */
-    background-color: #FFCC80; /* персиковый фон */
-}
+    .status-cooking {
+        color: #FF6B00;
+        background-color: #FFF8F0;
+    }
 
-.status-ready {
-    color: #388E3C; /* сохраняем зеленый для готовности */
-    background-color: #C8E6C9; /* светлый зеленый фон */
-}
+    .status-ready {
+        color: #388E3C;
+        background-color: #C8E6C9;
+    }
 
-.status-courier {
-    color: #EF6C00; /* темный оранжевый */
-    background-color: #FFB74D; /* янтарный фон */
-}
+    .status-courier {
+        color: #FF6B00;
+        background-color: #FFF8F0;
+    }
 
-.status-delivered {
-    color: #689F38; /* теплый зеленый */
-    background-color: #DCEDC8; /* светлый оливковый фон */
-}
+    .status-delivered {
+        color: #689F38;
+        background-color: #DCEDC8;
+    }
 
-.status-received {
-    color: #689F38; /* теплый зеленый (как у delivered) */
-    background-color: #DCEDC8;
-}
+    .status-received {
+        color: #689F38;
+        background-color: #DCEDC8;
+    }
 
-.status-canceled {
-    color: #D32F2F; /* теплый красный */
-    background-color: #FFCDD2; /* светлый розовый фон */
-}
+    .status-canceled {
+        color: #D32F2F;
+        background-color: #FFCDD2;
+    }
 
     .order-meta {
         display: grid;
@@ -106,18 +106,18 @@
     }
 
     .meta-item {
-        font-size: 0.95rem;
+        font-size: 1.14rem; /* 0.95 * 1.2 */
     }
 
     .meta-label {
         font-weight: 600;
-        color: #555;
+        color: #7D5522;
         display: block;
         margin-bottom: 0.2rem;
     }
 
     .meta-value {
-        color: #333;
+        color: #4A2C00;
     }
 
     .order-items {
@@ -143,6 +143,7 @@
         width: 100%;
         height: 100%;
         object-fit: cover;
+        /* Рамка убрана */
     }
 
     .item-details {
@@ -150,21 +151,21 @@
     }
 
     .item-name {
-        font-size: 1.1rem;
+        font-size: 1.32rem; /* 1.1 * 1.2 */
         font-weight: 600;
         margin: 0 0 0.3rem 0;
-        color: #333;
+        color: #4A2C00;
     }
 
     .item-price {
         font-weight: 600;
-        color: #e63946;
+        color: #FF6B00;
         margin: 0.5rem 0;
     }
 
     .item-options {
-        font-size: 0.85rem;
-        color: #666;
+        font-size: 1.02rem; /* 0.85 * 1.2 */
+        color: #A66B2E;
         margin-top: 0.5rem;
     }
 
@@ -177,41 +178,45 @@
     .empty-orders {
         text-align: center;
         padding: 3rem;
-        background: #fff;
+        background: #FFFFFF;
         border-radius: 12px;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
     }
 
     .empty-icon {
-        font-size: 3rem;
-        color: #e0e0e0;
+        font-size: 3.6rem; /* 3 * 1.2 */
+        color: #FF6B00;
         margin-bottom: 1.5rem;
     }
 
     .empty-text {
-        font-size: 1.3rem;
-        color: #555;
+        font-size: 1.56rem; /* 1.3 * 1.2 */
+        color: #4A2C00;
         margin-bottom: 1.5rem;
     }
 
     .primary-btn {
         padding: 1rem 2rem;
-        background: #e63946;
+        background: #FF6B00;
         color: white;
         border: none;
         border-radius: 6px;
-        font-size: 1.1rem;
+        font-size: 1.32rem; /* 1.1 * 1.2 */
         font-weight: 600;
         cursor: pointer;
         text-decoration: none;
         display: inline-flex;
         align-items: center;
         gap: 0.5rem;
-        transition: background 0.2s;
+        transition: all 0.2s;
+        box-shadow: 0 4px 10px rgba(255, 107, 0, 0.3);
     }
 
     .primary-btn:hover {
-        background: #d62839;
+        background: #E65A00;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(255, 107, 0, 0.4);
+        text-decoration: none;
     }
 
     @media (max-width: 768px) {

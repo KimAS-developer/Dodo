@@ -1,4 +1,4 @@
-{% extends 'baseTemplates/basePageWithoutHeader.html' %}
+{% extends 'baseTemplates/basePageWithoutNavbar.html' %}
 {% block title %}Профиль{% endblock %}
 {% block content %}
 <div class="profile-container">
@@ -55,92 +55,98 @@
 /* Стили профиля */
 .profile-container {
     max-width: 600px;
-    margin: 40px auto;
-    padding: 30px;
-    background: #FFF9F2;
-    border-radius: 15px;
-    box-shadow: 0 4px 20px rgba(255, 107, 0, 0.1);
+    margin: 48px auto; /* 40 * 1.2 */
+    padding: 36px; /* 30 * 1.2 */
+    background: #FFFFFF; /* Белый фон вместо #FFF9F2 */
+    border-radius: 18px; /* 15 * 1.2 */
+    box-shadow: 0 4.8px 24px rgba(255, 107, 0, 0.1); /* 4 * 1.2, 20 * 1.2 */
 }
 
-/* Добавляем стили для flash-сообщений */
+/* Стили для flash-сообщений */
 .flash-messages {
-    margin-bottom: 20px;
+    margin-bottom: 24px; /* 20 * 1.2 */
 }
 
 .flash-error {
-    padding: 10px 15px;
+    padding: 12px 18px; /* 10 * 1.2, 15 * 1.2 */
     background-color: #FFEBEE;
     color: #C62828;
-    border: 1px solid #EF9A9A;
-    border-radius: 4px;
-    margin-bottom: 10px;
+    border: 1.2px solid #EF9A9A; /* 1 * 1.2 */
+    border-radius: 4.8px; /* 4 * 1.2 */
+    margin-bottom: 12px; /* 10 * 1.2 */
 }
 
 .flash-success {
-    padding: 10px 15px;
+    padding: 12px 18px; /* 10 * 1.2, 15 * 1.2 */
     background-color: #E8F5E9;
     color: #2E7D32;
-    border: 1px solid #A5D6A7;
-    border-radius: 4px;
-    margin-bottom: 10px;
+    border: 1.2px solid #A5D6A7; /* 1 * 1.2 */
+    border-radius: 4.8px; /* 4 * 1.2 */
+    margin-bottom: 12px; /* 10 * 1.2 */
 }
 
 .profile-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 30px;
-    border-bottom: 2px solid #FFE0B2;
-    padding-bottom: 15px;
+    margin-bottom: 36px; /* 30 * 1.2 */
+    border-bottom: 2.4px solid #FFE8D6; /* 2 * 1.2 */
+    padding-bottom: 18px; /* 15 * 1.2 */
 }
 
 .profile-header h1 {
-    color: #E65100;
+    color: #4A2C00;
     margin: 0;
-    font-size: 28px;
+    font-size: 33.6px; /* 28 * 1.2 */
+    font-family: 'Lora', serif;
+    font-weight: 700;
 }
 
 .profile-icon {
-    font-size: 40px;
+    font-size: 48px; /* 40 * 1.2 */
     color: #FF6B00;
 }
 
 .profile-form {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 24px; /* 20 * 1.2 */
 }
 
 .form-group {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 9.6px; /* 8 * 1.2 */
 }
 
 .form-group label {
     font-weight: 600;
-    color: #5D4037;
+    color: #7D5522;
+    font-size: 19.2px; /* 16 * 1.2 */
+    font-family: 'Lora', serif;
 }
 
 .form-group input {
-    padding: 12px 15px;
-    border: 1px solid #FFCC80;
-    border-radius: 8px;
-    font-size: 16px;
+    padding: 14.4px 18px; /* 12 * 1.2, 15 * 1.2 */
+    border: 1.2px solid #FFCC80; /* 1 * 1.2 */
+    border-radius: 9.6px; /* 8 * 1.2 */
+    font-size: 19.2px; /* 16 * 1.2 */
     background: white;
     transition: all 0.3s;
+    font-family: 'Lora', serif;
 }
 
 .password-hint {
-    font-size: 12px;
-    color: #9E9E9E;
-    margin-top: 4px;
+    font-size: 14.4px; /* 12 * 1.2 */
+    color: #A66B2E;
+    margin-top: 4.8px; /* 4 * 1.2 */
+    font-family: 'Lora', serif;
 }
 
 .form-group input:focus {
     border-color: #FF6B00;
     outline: none;
-    box-shadow: 0 0 0 2px rgba(255, 107, 0, 0.2);
+    box-shadow: 0 0 0 2.4px rgba(255, 107, 0, 0.2); /* 2 * 1.2 */
 }
 
 .form-group input[readonly] {
@@ -150,21 +156,22 @@
 
 .form-actions {
     display: flex;
-    gap: 15px;
-    margin-top: 20px;
+    gap: 18px; /* 15 * 1.2 */
+    margin-top: 24px; /* 20 * 1.2 */
 }
 
 .save-btn {
     background: #FF6B00;
     color: white;
     border: none;
-    padding: 12px 25px;
-    border-radius: 8px;
-    font-size: 16px;
+    padding: 14.4px 30px; /* 12 * 1.2, 25 * 1.2 */
+    border-radius: 9.6px; /* 8 * 1.2 */
+    font-size: 19.2px; /* 16 * 1.2 */
     font-weight: 600;
     cursor: pointer;
     transition: background 0.3s;
     flex: 1;
+    font-family: 'Lora', serif;
 }
 
 .save-btn:hover {
@@ -172,34 +179,36 @@
 }
 
 .cancel-btn {
-    background: #F5F5F5;
-    color: #757575;
-    border: none;
-    padding: 12px 25px;
-    border-radius: 8px;
-    font-size: 16px;
+    background: #FFFFFF;
+    color: #4A2C00;
+    border: 1px solid #FF6B00;
+    padding: 14.4px 30px; /* 12 * 1.2, 25 * 1.2 */
+    border-radius: 9.6px; /* 8 * 1.2 */
+    font-size: 19.2px; /* 16 * 1.2 */
     font-weight: 600;
     cursor: pointer;
-    transition: background 0.3s;
+    transition: all 0.3s;
     text-align: center;
     text-decoration: none;
     flex: 1;
+    font-family: 'Lora', serif;
 }
 
 .cancel-btn:hover {
-    background: #E0E0E0;
+    background: #FFF8F0;
+    color: #FF6B00;
 }
 
 /* Адаптивность */
 @media (max-width: 768px) {
     .profile-container {
-        margin: 20px;
-        padding: 20px;
+        margin: 24px; /* 20 * 1.2 */
+        padding: 24px; /* 20 * 1.2 */
     }
-    
+
     .profile-header {
         flex-direction: column;
-        gap: 10px;
+        gap: 12px; /* 10 * 1.2 */
         text-align: center;
     }
     

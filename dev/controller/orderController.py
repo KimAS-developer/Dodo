@@ -122,14 +122,15 @@ def order_history():
             Order.restaurant_id == current_user.restaurant_id,
             Order.status.in_(['delivered', 'received', 'canceled'])
         ).order_by(Order.created_at.desc()).all()
+        return render_template('order_history_cook.html', orders=orders)
+
     else:
         # История заказов клиента
         orders = Order.query.filter(
             Order.user_id == current_user.id,
             Order.status.in_(['delivered', 'received', 'canceled'])
         ).order_by(Order.created_at.desc()).all()
-
-    return render_template('order_history.html', orders=orders)
+    return render_template('order_history_client.html', orders=orders)
 
 
 @orders_bp.route('/api/orders/<int:order_id>/status', methods=['PUT'])
