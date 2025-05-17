@@ -9,6 +9,8 @@ auth_bp = Blueprint('auth', __name__)
 @auth_bp.route('/auth', methods=['GET', 'POST'])
 def auth_handler():
     if current_user.is_authenticated:
+        if current_user.is_cook():
+            return redirect(url_for('orders.list_orders'))
         return redirect(url_for('mainPage.index'))
 
     if request.method == 'POST':
@@ -32,6 +34,9 @@ def handle_login(email, password):
         return redirect(url_for('auth.auth_handler'))
 
     login_user(user)
+
+    if user.is_cook():
+        return redirect(url_for('orders.list_orders'))
     return redirect(url_for('mainPage.index'))
 
 

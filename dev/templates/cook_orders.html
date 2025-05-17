@@ -1,5 +1,5 @@
 {% extends 'baseTemplates/basePageWithoutHeader.html' %}
-{% block title %}Управление заказами{% endblock %}
+{% block title %}Заказы ресторана{% endblock %}
 {% block content %}
 <style>
     .orders-section {
@@ -17,6 +17,13 @@
         font-weight: 700;
     }
 
+    .restaurant-address {
+        text-align: center;
+        margin-bottom: 2rem;
+        font-size: 1.2rem;
+        color: #555;
+    }
+
     .orders-list {
         display: flex;
         flex-direction: column;
@@ -26,66 +33,206 @@
     .order-card {
         background: #fff;
         padding: 1.5rem;
-        border-radius: 8px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-        display: grid;
-        grid-template-columns: 2fr 1fr 1fr;
-        gap: 1rem;
-        align-items: center;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        transition: all 0.3s ease;
+        border: 1px solid #eee;
     }
 
-    .order-details h3 {
-        font-size: 1.2rem;
-        margin: 0 0 0.5rem 0;
+    .order-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .order-title {
+        font-size: 1.3rem;
+        margin: 0;
         color: #333;
     }
 
-    .order-details p {
-        margin: 0.2rem 0;
+    .order-id {
+        color: #666;
+        font-weight: normal;
+    }
+
+    .order-meta {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .meta-item {
+        font-size: 0.95rem;
+    }
+
+    .meta-label {
+        font-weight: 600;
         color: #555;
-        font-size: 0.9rem;
+        display: block;
+        margin-bottom: 0.2rem;
+    }
+
+    .meta-value {
+        color: #333;
     }
 
     .order-status {
+        display: inline-block;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+
+    /* Цвета статусов */
+    .status-processing {
+        color: #1a73e8;
+        background-color: #e8f0fe;
+    }
+
+    .status-cooking {
+        color: #fbbc04;
+        background-color: #fff8e6;
+    }
+
+    .status-ready {
+        color: #34a853;
+        background-color: #e6f4ea;
+    }
+
+    .status-canceled {
+        color: #d93025;
+        background-color: #fce8e6;
+    }
+
+    .status-delivered {
+        color: #34a853;
+        background-color: #e6f4ea;
+    }
+
+    .order-items {
+        margin-top: 1.5rem;
+    }
+
+    .order-item {
+        display: flex;
+        gap: 1.5rem;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        background: #fafafa;
+        border-radius: 8px;
+        transition: background 0.2s;
+    }
+
+    .order-item:hover {
+        background: #f5f5f5;
+    }
+
+    .item-image {
+        flex: 0 0 80px;
+        height: 80px;
+        border-radius: 6px;
+        overflow: hidden;
+    }
+
+    .item-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .item-details {
+        flex: 1;
+    }
+
+    .item-name {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin: 0 0 0.3rem 0;
+        color: #333;
+    }
+
+    .item-price {
         font-weight: 600;
         color: #e63946;
+        margin: 0.5rem 0;
+    }
+
+    .item-options {
+        font-size: 0.85rem;
+        color: #666;
+        margin-top: 0.5rem;
+    }
+
+    .item-option {
+        display: inline-block;
+        margin-right: 1rem;
+        margin-bottom: 0.3rem;
     }
 
     .order-actions {
         display: flex;
-        gap: 0.5rem;
         justify-content: flex-end;
+        gap: 1rem;
+        margin-top: 1.5rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid #f0f0f0;
     }
 
-    .action-btn {
-        padding: 0.5rem 1rem;
+    .status-form {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+        width: 100%;
+    }
+
+    .status-select {
+        padding: 0.7rem 1rem;
+        border-radius: 6px;
+        border: 1px solid #ddd;
+        font-size: 0.95rem;
+        flex-grow: 1;
+        max-width: 200px;
+    }
+
+    .status-btn {
+        padding: 0.7rem 1.5rem;
         border: none;
-        border-radius: 4px;
+        border-radius: 6px;
         cursor: pointer;
-        font-size: 0.9rem;
-        transition: background 0.2s;
-    }
-
-    .accept-btn {
-        background: #4CAF50;
+        font-size: 0.95rem;
+        font-weight: 500;
+        transition: all 0.2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background-color: #4CAF50;
         color: white;
     }
 
-    .accept-btn:hover {
-        background: #45a049;
+    .status-btn:hover:not(:disabled) {
+        background-color: #3e8e41;
     }
 
-    .complete-btn {
-        background: #2196F3;
-        color: white;
+    .status-btn:disabled {
+        background: #f5f5f5;
+        color: #9e9e9e;
+        cursor: not-allowed;
     }
 
-    .complete-btn:hover {
-        background: #1e88e5;
-    }
-
-    .action-btn:disabled {
-        background: #e0e0e0;
+    .canceled-btn {
+        padding: 0.7rem 1.5rem;
+        border: none;
+        border-radius: 6px;
+        font-size: 0.95rem;
+        font-weight: 500;
+        background: #f5f5f5;
+        color: #9e9e9e;
         cursor: not-allowed;
     }
 
@@ -93,158 +240,259 @@
         text-align: center;
         padding: 3rem;
         background: #fff;
-        border-radius: 8px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
     }
 
-    .empty-orders p {
-        font-size: 1.2rem;
+    .empty-icon {
+        font-size: 3rem;
+        color: #e0e0e0;
+        margin-bottom: 1.5rem;
+    }
+
+    .empty-text {
+        font-size: 1.3rem;
         color: #555;
-    }
-
-    @media (max-width: 768px) {
-        .order-card {
-            grid-template-columns: 1fr;
-            text-align: center;
-        }
-
-        .order-actions {
-            justify-content: center;
-        }
+        margin-bottom: 1.5rem;
     }
 </style>
 
 <section class="orders-section">
-    <h2 class="section-title">Управление заказами</h2>
+    <h2 class="section-title">Заказы ресторана</h2>
+    <div class="restaurant-address">
+        Адрес: {{ current_user.restaurant.address if current_user.restaurant else 'Не указан' }}
+    </div>
 
     <div class="orders-list">
         {% if orders %}
         {% for order in orders %}
         <div class="order-card" data-id="{{ order.id }}">
-            <div class="order-details">
-                <h3>Заказ #{{ order.id }}</h3>
-                <p>Клиент: {{ order.user.name }}</p>
-                <p>Сумма: {{ order.get_total_price() }} ₽</p>
-                <p>Способ получения: {{ 'Самовывоз' if order.delivery_type == 'pickup' else 'Доставка' }}</p>
+            <div class="order-header">
+                <h3 class="order-title">Заказ <span class="order-id">#{{ order.id }}</span></h3>
+                <div class="order-status status-{{ order.status }}">
+                    {{ order.get_status_display() }}
+                </div>
+            </div>
+
+            <div class="order-meta">
+                <div class="meta-item">
+                    <span class="meta-label">Дата заказа</span>
+                    <span class="meta-value">{{ order.created_at.strftime('%d.%m.%Y %H:%M') }}</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Сумма</span>
+                    <span class="meta-value">{{ "%.2f"|format(order.get_total_price()) }} ₽</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Способ получения</span>
+                    <span class="meta-value">{{ order.get_delivery_type_display() }}</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Клиент</span>
+                    <span class="meta-value">{{ order.customer_info.name }}</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Телефон</span>
+                    <span class="meta-value">{{ order.customer_info.phone or 'Не указан' }}</span>
+                </div>
                 {% if order.delivery_type == 'delivery' %}
-                <p>Адрес: {{ order.address }}</p>
+                <div class="meta-item">
+                    <span class="meta-label">Адрес доставки</span>
+                    <span class="meta-value">{{ order.address }}</span>
+                </div>
                 {% endif %}
-                <p>Способ оплаты: {{ 'Наличными' if order.payment_method == 'cash' else 'Картой' }}</p>
+            </div>
+
+            <div class="order-items">
+                <h4>Состав заказа:</h4>
                 {% for item in order.items %}
-                <p>{{ item.name }} ({{ item.type }}) - {{ item.quantity }} шт. ({{ item.total_price }} ₽)</p>
-                {% if item.size or item.dough or item.extra_ingredients %}
-                <p>
-                    {% if item.size %}Размер: {{ item.size }} см, {% endif %}
-                    {% if item.dough %}Тесто: {{ item.dough|capitalize }}, {% endif %}
-                    {% if item.extra_ingredients %}
-                    Дополнительно: {{ item.extra_ingredients|map(attribute='name')|join(', ') }}
-                    {% endif %}
-                </p>
-                {% endif %}
+                <div class="order-item">
+                    <div class="item-image">
+                        {% if item.image %}
+                        <img src="{{ url_for('static', filename='img/' + item.image) }}" alt="{{ item.name }}"
+                             loading="lazy">
+                        {% else %}
+                        <img src="{{ url_for('static', filename='img/no-image.jpg') }}" alt="Нет изображения"
+                             loading="lazy">
+                        {% endif %}
+                    </div>
+                    <div class="item-details">
+                        <h5 class="item-name">{{ item.name }}</h5>
+                        <div class="item-price">
+                            {{ item.quantity }} шт. × {{ "%.2f"|format(item.unit_price) }} ₽ = {{
+                            "%.2f"|format(item.total_price) }} ₽
+                        </div>
+                        {% if item.size or item.dough or (item.extra_ingredients and item.extra_ingredients|length > 0)
+                        %}
+                        <div class="item-options">
+                            {% if item.size %}
+                            <span class="item-option">Размер: {{ item.size }} см</span>
+                            {% endif %}
+                            {% if item.dough %}
+                            <span class="item-option">Тесто: {{ order.get_dough_display(item.dough) }}</span>
+                            {% endif %}
+                            {% if item.extra_ingredients and item.extra_ingredients|length > 0 %}
+                            <div class="item-option">
+                                Дополнительно:
+                                {% for ing in item.extra_ingredients %}
+                                {{ ing.name }}{% if not loop.last %}, {% endif %}
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
                 {% endfor %}
             </div>
-            <div class="order-status">
-                {{ order.status }}
-            </div>
+
             <div class="order-actions">
-                <button class="action-btn accept-btn"
-                        {% if order.status != 'В обработке' %}disabled{% endif %}>
-                    Принять
-                </button>
-                <button class="action-btn complete-btn"
-                        {% if order.status != 'Готовится' %}disabled{% endif %}>
-                    Завершить
-                </button>
+                {% if order.status != 'canceled' %}
+                <form class="status-form" data-order-id="{{ order.id }}">
+                    <select name="status" class="status-select">
+                        <option value="processing" {% if order.status=='processing' %}selected{% endif %}>В обработке</option>
+                        <option value="cooking" {% if order.status=='cooking' %}selected{% endif %}>Готовится</option>
+                        <option value="ready" {% if order.status=='ready' %}selected{% endif %}>Готово</option>
+                    </select>
+                    <button type="submit" class="status-btn" {% if order.status==selected_status %}disabled{% endif %}>
+                        Обновить статус
+                    </button>
+                </form>
+                {% else %}
+                <button class="canceled-btn" disabled>Отменен</button>
+                {% endif %}
             </div>
         </div>
         {% endfor %}
         {% else %}
         <div class="empty-orders">
-            <p>Нет активных заказов</p>
+            <div class="empty-icon">
+                <i class="fas fa-box-open"></i>
+            </div>
+            <p class="empty-text">Нет заказов</p>
         </div>
         {% endif %}
     </div>
 </section>
 
 <script>
-    class OrdersManager {
-        constructor() {
-            this.initEvents();
-        }
-
-        initEvents() {
-            document.addEventListener('click', e => {
-                const target = e.target;
-                if (target.classList.contains('accept-btn')) {
-                    this.handleAcceptOrder(target);
-                } else if (target.classList.contains('complete-btn')) {
-                    this.handleCompleteOrder(target);
-                }
-            });
-        }
-
-        async handleAcceptOrder(button) {
-            const orderCard = button.closest('.order-card');
-            const orderId = orderCard.dataset.id;
-            button.disabled = true;
-
-            try {
-                const response = await this.sendRequest(`/api/orders/${orderId}/accept`, 'POST');
-                if (response.status === 'success') {
-                    orderCard.querySelector('.order-status').textContent = 'Готовится';
-                    button.disabled = true;
-                    orderCard.querySelector('.complete-btn').disabled = false;
-                }
-            } catch (error) {
-                this.showError(error);
-            }
-        }
-
-        async handleCompleteOrder(button) {
-            const orderCard = button.closest('.order-card');
-            const orderId = orderCard.dataset.id;
-            button.disabled = true;
-
-            try {
-                const response = await this.sendRequest(`/api/orders/${orderId}/complete`, 'POST');
-                if (response.status === 'success') {
-                    orderCard.querySelector('.order-status').textContent = 'Готово';
-                    button.disabled = true;
-                }
-            } catch (error) {
-                this.showError(error);
-            }
-        }
-
-        async sendRequest(url, method, data = null) {
-            const headers = {
-                'Content-Type': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest',
-                'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]')?.content || ''
-            };
-
-            const response = await fetch(url, {
-                method,
-                headers,
-                body: data ? JSON.stringify(data) : null
-            });
-
-            if (!response.ok) {
-                const error = await response.json().catch(() => ({}));
-                throw new Error(error.message || 'Ошибка сервера');
-            }
-
-            return response.json();
-        }
-
-        showError(error) {
-            console.error('Order Error:', error);
-            alert(error.message || 'Произошла ошибка');
-        }
-    }
-
     document.addEventListener('DOMContentLoaded', () => {
-        new OrdersManager();
+        // Блокируем кнопку если выбран текущий статус
+        const updateButtonStates = () => {
+            document.querySelectorAll('.status-form').forEach(form => {
+                const select = form.querySelector('.status-select');
+                const button = form.querySelector('.status-btn');
+                const currentStatus = form.closest('.order-card').querySelector('.order-status').textContent.trim();
+
+                // Сравниваем выбранное значение с текущим статусом
+                const selectedStatusText = {
+                    'processing': 'В обработке',
+                    'cooking': 'Готовится',
+                    'ready': 'Готово'
+                }[select.value];
+
+                button.disabled = selectedStatusText === currentStatus;
+            });
+        };
+
+        // Инициализируем состояние кнопок
+        updateButtonStates();
+
+        // Обновляем состояние кнопок при изменении выбора
+        document.querySelectorAll('.status-select').forEach(select => {
+            select.addEventListener('change', updateButtonStates);
+        });
+
+        // Обработка отправки формы
+        document.querySelectorAll('.status-form').forEach(form => {
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                const orderId = form.dataset.orderId;
+                const statusSelect = form.querySelector('.status-select');
+                const status = statusSelect.value;
+                const submitBtn = form.querySelector('.status-btn');
+
+                // Сохраняем оригинальный текст кнопки
+                const originalText = submitBtn.innerHTML;
+
+                // Блокируем кнопку и меняем текст
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Обновление...';
+
+                try {
+                    const response = await fetch(`/api/orders/${orderId}/status`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]')?.content || ''
+                        },
+                        body: JSON.stringify({ status })
+                    });
+
+                    if (!response.ok) {
+                        const errorData = await response.json().catch(() => ({}));
+                        throw new Error(errorData.message || 'Ошибка при обновлении статуса');
+                    }
+
+                    const data = await response.json();
+
+                    if (data.status === 'success') {
+                        // Обновляем статус на странице
+                        const statusElement = form.closest('.order-card').querySelector('.order-status');
+                        statusElement.textContent = {
+                            'processing': 'В обработке',
+                            'cooking': 'Готовится',
+                            'ready': 'Готово',
+                            'canceled': 'Отменен',
+                            'delivered': 'Доставлен'
+                        }[status];
+
+                        // Обновляем класс статуса
+                        statusElement.className = `order-status status-${status}`;
+
+                        // Показываем уведомление
+                        showAlert('Статус заказа успешно обновлен', 'success');
+
+                        // Обновляем состояние кнопки
+                        updateButtonStates();
+                    } else {
+                        throw new Error(data.message || 'Ошибка при обновлении статуса');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    showAlert(error.message || 'Произошла ошибка', 'error');
+                } finally {
+                    // Восстанавливаем кнопку
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalText;
+                    updateButtonStates();
+                }
+            });
+        });
+
+        function showAlert(message, type = 'success') {
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            alert.style.position = 'fixed';
+            alert.style.top = '20px';
+            alert.style.right = '20px';
+            alert.style.padding = '1rem 1.5rem';
+            alert.style.borderRadius = '6px';
+            alert.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+            alert.style.backgroundColor = type === 'success' ? '#4CAF50' : '#f44336';
+            alert.style.color = 'white';
+            alert.style.zIndex = '1000';
+            alert.style.animation = 'fadeIn 0.3s';
+            alert.textContent = message;
+
+            document.body.appendChild(alert);
+
+            setTimeout(() => {
+                alert.style.animation = 'fadeOut 0.3s';
+                setTimeout(() => alert.remove(), 300);
+            }, 3000);
+        }
     });
 </script>
 {% endblock %}

@@ -79,10 +79,15 @@ def checkout():
 @orders_bp.route('/api/orders/<int:order_id>/status', methods=['PUT'])
 @login_required
 def update_order_status(order_id):
-    if not current_user.is_staff:
+    if not current_user.is_cook():
         return jsonify({'status': 'error', 'message': 'Permission denied'}), 403
 
     order = Order.query.get_or_404(order_id)
+
+    # Проверяем, что заказ принадлежит ресторану повара
+    if order.restaurant_id != current_user.restaurant_id:
+        return jsonify({'status': 'error', 'message': 'Этот заказ не из вашего ресторана'}), 403
+
     new_status = request.json.get('status')
 
     valid_statuses = ['processing', 'cooking', 'ready', 'delivered', 'canceled']
@@ -92,7 +97,12 @@ def update_order_status(order_id):
     order.status = new_status
     db.session.commit()
 
-    return jsonify({'status': 'success', 'message': 'Order status updated'})
+    return jsonify({
+        'status': 'success',
+        'message': 'Статус заказа обновлен',
+        'new_status': new_status,
+        'status_display': order.get_status_display()
+    })
 
 
 @orders_bp.route('/orders')
@@ -102,12 +112,14 @@ def list_orders():
         # Staff can see orders for their restaurant
         orders = Order.query.filter_by(restaurant_id=current_user.restaurant_id) \
             .order_by(Order.created_at.desc()).all()
+        return render_template('cook_orders.html',
+                             orders=orders,
+                             restaurant_address=current_user.restaurant.address)
     else:
         # Users can see their own orders
         orders = Order.query.filter_by(user_id=current_user.id) \
             .order_by(Order.created_at.desc()).all()
-
-    return render_template('client_orders.html', orders=orders)
+        return render_template('client_orders.html', orders=orders)
 
 
 @orders_bp.route('/orders/<int:order_id>/cancel', methods=['POST'])
