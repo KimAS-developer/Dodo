@@ -162,7 +162,6 @@
         gap: 1.5rem;
         padding: 1rem;
         margin-bottom: 1rem;
-        background: #fafafa;
         border-radius: 8px;
     }
 
@@ -503,18 +502,33 @@
                     const data = await response.json();
 
                     if (data.status === 'success') {
-                        // Обновляем статус на странице
-                        const statusElement = form.closest('.order-card').querySelector('.order-status');
-                        statusElement.textContent = data.status_display;
-                        statusElement.className = `order-status status-${status}`;
-
-                        // Если статус финальный - удаляем форму
+                        // Если статус финальный - плавно удаляем карточку заказа
                         if (['delivered', 'received', 'canceled'].includes(status)) {
-                            form.closest('.order-actions').innerHTML = `
-                                <div class="order-status status-${status}" style="margin-left: auto;">
-                                    ${data.status_display}
-                                </div>
-                            `;
+                            const orderCard = form.closest('.order-card');
+                            orderCard.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+                            orderCard.style.opacity = '0';
+                            orderCard.style.transform = 'translateX(-100px)';
+
+                            setTimeout(() => {
+                                orderCard.remove();
+
+                                // Если это был последний заказ, показываем сообщение
+                                if (document.querySelectorAll('.order-card').length === 0) {
+                                    document.querySelector('.orders-list').innerHTML = `
+                                        <div class="empty-orders">
+                                            <div class="empty-icon">
+                                                <i class="fas fa-box-open"></i>
+                                            </div>
+                                            <p class="empty-text">Нет текущих заказов</p>
+                                        </div>
+                                    `;
+                                }
+                            }, 300);
+                        } else {
+                            // Для нефинальных статусов просто обновляем отображение
+                            const statusElement = form.closest('.order-card').querySelector('.order-status');
+                            statusElement.textContent = data.status_display;
+                            statusElement.className = `order-status status-${status}`;
                         }
 
                         // Показываем уведомление
@@ -555,6 +569,18 @@
                 alert.style.animation = 'fadeOut 0.3s';
                 setTimeout(() => alert.remove(), 300);
             }, 3000);
+        }
+
+        // Проверяем при загрузке, нет ли активных заказов
+        if (document.querySelectorAll('.order-card').length === 0) {
+            document.querySelector('.orders-list').innerHTML = `
+                <div class="empty-orders">
+                    <div class="empty-icon">
+                        <i class="fas fa-box-open"></i>
+                    </div>
+                    <p class="empty-text">Нет текущих заказов</p>
+                </div>
+            `;
         }
     });
 </script>

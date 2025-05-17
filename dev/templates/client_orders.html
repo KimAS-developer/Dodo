@@ -123,14 +123,10 @@
         gap: 1.5rem;
         padding: 1rem;
         margin-bottom: 1rem;
-        background: #fafafa;
         border-radius: 8px;
         transition: background 0.2s;
     }
 
-    .order-item:hover {
-        background: #f5f5f5;
-    }
 
     .item-image {
         flex: 0 0 80px;
@@ -423,14 +419,29 @@
                     const data = await response.json();
 
                     if (data.status === 'success') {
-                        // Обновляем статус заказа
-                        const statusElement = orderCard.querySelector('.order-status');
-                        statusElement.textContent = 'Отменен';
-                        statusElement.className = 'order-status status-canceled';
+                        // Плавно удаляем карточку заказа
+                        orderCard.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+                        orderCard.style.opacity = '0';
+                        orderCard.style.transform = 'translateX(-100px)';
 
-                        // Перманентно отключаем кнопку
-                        this.disabled = true;
-                        this.innerHTML = '<i class="fas fa-times"></i> Отменен';
+                        setTimeout(() => {
+                            orderCard.remove();
+
+                            // Если это был последний заказ, показываем сообщение
+                            if (document.querySelectorAll('.order-card').length === 0) {
+                                document.querySelector('.orders-list').innerHTML = `
+                                    <div class="empty-orders">
+                                        <div class="empty-icon">
+                                            <i class="fas fa-box-open"></i>
+                                        </div>
+                                        <p class="empty-text">У вас пока нет активных заказов</p>
+                                        <a href="{{ url_for('mainPage.index') }}" class="primary-btn">
+                                            <i class="fas fa-utensils"></i> Вернуться в меню
+                                        </a>
+                                    </div>
+                                `;
+                            }
+                        }, 300);
 
                         // Показываем уведомление
                         showAlert('Заказ успешно отменен', 'success');
@@ -467,6 +478,21 @@
                 alert.style.animation = 'fadeOut 0.3s';
                 setTimeout(() => alert.remove(), 300);
             }, 3000);
+        }
+
+        // Проверяем при загрузке, нет ли активных заказов
+        if (document.querySelectorAll('.order-card').length === 0) {
+            document.querySelector('.orders-list').innerHTML = `
+                <div class="empty-orders">
+                    <div class="empty-icon">
+                        <i class="fas fa-box-open"></i>
+                    </div>
+                    <p class="empty-text">У вас пока нет активных заказов</p>
+                    <a href="{{ url_for('mainPage.index') }}" class="primary-btn">
+                        <i class="fas fa-utensils"></i> Вернуться в меню
+                    </a>
+                </div>
+            `;
         }
     });
 </script>

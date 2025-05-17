@@ -4,15 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3e3920ed-dc65-42d2-a282-7487a06da7be" name="Changes" comment="added cook's order list. Fixed updating order's status">
-      <change afterPath="$PROJECT_DIR$/dev/templates/order_history.html" afterDir="false" />
+    <list default="true" id="3e3920ed-dc65-42d2-a282-7487a06da7be" name="Changes" comment="Fixed order's statuses. Added status &quot;received&quot; and &quot;delivered&quot;. Updated styles for cart, order_history and order_lists">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dev/controller/orderController.py" beforeDir="false" afterPath="$PROJECT_DIR$/dev/controller/orderController.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dev/domain/order.py" beforeDir="false" afterPath="$PROJECT_DIR$/dev/domain/order.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dev/templates/baseTemplates/_header.html" beforeDir="false" afterPath="$PROJECT_DIR$/dev/templates/baseTemplates/_header.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/dev/templates/cart.html" beforeDir="false" afterPath="$PROJECT_DIR$/dev/templates/cart.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/dev/templates/client_orders.html" beforeDir="false" afterPath="$PROJECT_DIR$/dev/templates/client_orders.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/dev/templates/cook_orders.html" beforeDir="false" afterPath="$PROJECT_DIR$/dev/templates/cook_orders.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev/templates/order_history.html" beforeDir="false" afterPath="$PROJECT_DIR$/dev/templates/order_history.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -177,7 +174,15 @@
       <option name="project" value="LOCAL" />
       <updated>1747503147541</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="Fixed order's statuses. Added status &quot;received&quot; and &quot;delivered&quot;. Updated styles for cart, order_history and order_lists">
+      <option name="closed" value="true" />
+      <created>1747509080502</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1747509080504</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -196,6 +201,7 @@
     <MESSAGE value="fixed Cart" />
     <MESSAGE value="added client's order list" />
     <MESSAGE value="added cook's order list. Fixed updating order's status" />
-    <option name="LAST_COMMIT_MESSAGE" value="added cook's order list. Fixed updating order's status" />
+    <MESSAGE value="Fixed order's statuses. Added status &quot;received&quot; and &quot;delivered&quot;. Updated styles for cart, order_history and order_lists" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fixed order's statuses. Added status &quot;received&quot; and &quot;delivered&quot;. Updated styles for cart, order_history and order_lists" />
   </component>
 </project>
