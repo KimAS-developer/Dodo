@@ -11,20 +11,30 @@ orders_bp = Blueprint('orders', __name__)
 @orders_bp.route('/api/cart/checkout', methods=['POST'])
 @login_required
 def checkout():
+    # Получаем данные из запроса
     data = request.get_json()
 
-    # Get user's cart items
+    # Проверяем наличие товаров в корзине
     cart_items = Cart.query.filter_by(user_id=current_user.id).all()
-
     if not cart_items:
-        return jsonify({'status': 'error', 'message': 'Your cart is empty'}), 400
+        return jsonify({'status': 'error', 'message': 'Ваша корзина пуста'}), 400
 
-    # Prepare order data
+    # Проверяем обязательные поля в зависимости от типа доставки
+    delivery_type = data.get('delivery_type', 'pickup')
+    payment_method = data.get('payment_method', 'cash')
+
+    if delivery_type == 'delivery' and not data.get('address'):
+        return jsonify({'status': 'error', 'message': 'Укажите адрес доставки'}), 400
+
+    if delivery_type == 'pickup' and not data.get('restaurant_id'):
+        return jsonify({'url_forstatus': 'error', 'message': 'Выберите ресторан для самовывоза'}), 400
+
+    # Подготавливаем данные заказа
     order_data = {
-        'delivery_type': data.get('delivery_type', 'pickup'),
-        'payment_method': data.get('payment_method', 'cash'),
+        'delivery_type': delivery_type,
+        'payment_method': payment_method,
         'address': data.get('address'),
-        'restaurant_id': data.get('restaurant_id') if data.get('delivery_type') == 'pickup' else None,
+        'restaurant_id': data.get('restaurant_id') if delivery_type == 'pickup' else 1,
         'customer_info': {
             'name': current_user.name,
             'phone': current_user.phone,
@@ -33,24 +43,26 @@ def checkout():
         'items': []
     }
 
-    # Convert cart items to order items format
+    # Конвертируем товары из корзины в формат заказа
     for item in cart_items:
+        product = item.pizza or item.drink or item.desert
+        if not product:
+            continue
+
         item_data = {
             'type': 'pizza' if item.pizza else 'drink' if item.drink else 'desert',
-            'name': item.pizza.name if item.pizza else item.drink.name if item.drink else item.desert.name,
+            'name': product.name,
             'quantity': item.quantity,
             'unit_price': item.get_price(),
             'total_price': item.get_total_price(),
             'size': item.size,
             'dough': item.dough,
             'extra_ingredients': item.extra_ingredients,
-            'image': item.pizza.image_path if item.pizza else
-            item.drink.image_path if item.drink else
-            item.desert.image_path if item.desert else ''
+            'image': product.image_path if hasattr(product, 'image_path') else ''
         }
         order_data['items'].append(item_data)
 
-    # Create new order
+    # Создаем новый заказ
     new_order = Order(
         user_id=current_user.id,
         restaurant_id=order_data['restaurant_id'],
@@ -62,18 +74,62 @@ def checkout():
         status='processing'
     )
 
-    db.session.add(new_order)
-
-    # Clear the cart
-    Cart.query.filter_by(user_id=current_user.id).delete()
-
-    db.session.commit()
+    try:
+        db.session.add(new_order)
+        # Очищаем корзину
+        Cart.query.filter_by(user_id=current_user.id).delete()
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({
+            'status': 'error',
+            'message': 'Произошла ошибка при оформлении заказа',
+            'error': str(e)
+        }), 500
 
     return jsonify({
         'status': 'success',
         'order_id': new_order.id,
-        'redirect': url_for('orders.list_orders', order_id=new_order.id)
+        'redirect': url_for('orders.list_orders')
     })
+
+
+@orders_bp.route('/orders')
+@login_required
+def list_orders():
+    if current_user.is_cook():
+        # Для поваров - активные заказы ресторана (исключая финальные статусы)
+        orders = Order.query.filter(
+            Order.restaurant_id == current_user.restaurant_id,
+            ~Order.status.in_(['delivered', 'received', 'canceled'])
+        ).order_by(Order.created_at.desc()).all()
+        return render_template('cook_orders.html', orders=orders)
+    else:
+        # Для клиентов - их активные заказы
+        orders = Order.query.filter(
+            Order.user_id == current_user.id,
+            ~Order.status.in_(['delivered', 'received', 'canceled'])
+        ).order_by(Order.created_at.desc()).all()
+        return render_template('client_orders.html', orders=orders)
+
+
+@orders_bp.route('/history')
+@login_required
+def order_history():
+    if current_user.is_cook():
+        # История заказов ресторана (только финальные статусы)
+        orders = Order.query.filter(
+            Order.restaurant_id == current_user.restaurant_id,
+            Order.status.in_(['delivered', 'received', 'canceled'])
+        ).order_by(Order.created_at.desc()).all()
+    else:
+        # История заказов клиента
+        orders = Order.query.filter(
+            Order.user_id == current_user.id,
+            Order.status.in_(['delivered', 'received', 'canceled'])
+        ).order_by(Order.created_at.desc()).all()
+
+    return render_template('order_history.html', orders=orders)
 
 
 @orders_bp.route('/api/orders/<int:order_id>/status', methods=['PUT'])
@@ -90,9 +146,15 @@ def update_order_status(order_id):
 
     new_status = request.json.get('status')
 
-    valid_statuses = ['processing', 'cooking', 'ready', 'delivered', 'canceled']
+    # Базовые допустимые статусы
+    valid_statuses = ['processing', 'cooking', 'ready']
+
+    # Добавляем финальный статус в зависимости от типа доставки
+    final_status = order.get_final_status()
+    valid_statuses.append(final_status)
+
     if new_status not in valid_statuses:
-        return jsonify({'status': 'error', 'message': 'Invalid status'}), 400
+        return jsonify({'status': 'error', 'message': 'Недопустимый статус для этого типа заказа'}), 400
 
     order.status = new_status
     db.session.commit()
@@ -103,23 +165,6 @@ def update_order_status(order_id):
         'new_status': new_status,
         'status_display': order.get_status_display()
     })
-
-
-@orders_bp.route('/orders')
-@login_required
-def list_orders():
-    if current_user.is_cook():
-        # Staff can see orders for their restaurant
-        orders = Order.query.filter_by(restaurant_id=current_user.restaurant_id) \
-            .order_by(Order.created_at.desc()).all()
-        return render_template('cook_orders.html',
-                             orders=orders,
-                             restaurant_address=current_user.restaurant.address)
-    else:
-        # Users can see their own orders
-        orders = Order.query.filter_by(user_id=current_user.id) \
-            .order_by(Order.created_at.desc()).all()
-        return render_template('client_orders.html', orders=orders)
 
 
 @orders_bp.route('/orders/<int:order_id>/cancel', methods=['POST'])

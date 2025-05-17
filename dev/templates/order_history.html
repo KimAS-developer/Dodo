@@ -1,5 +1,5 @@
 {% extends 'baseTemplates/basePageWithoutHeader.html' %}
-{% block title %}Мои заказы{% endblock %}
+{% block title %}История заказов{% endblock %}
 {% block content %}
 <style>
 
@@ -53,6 +53,30 @@
         font-weight: normal;
     }
 
+    .order-status {
+        display: inline-block;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+
+    /* Цвета статусов */
+    .status-delivered {
+        color: #34a853;
+        background-color: #e6f4ea;
+    }
+
+    .status-received {
+        color: #34a853;
+        background-color: #e6f4ea;
+    }
+
+    .status-canceled {
+        color: #d93025;
+        background-color: #fce8e6;
+    }
+
     .order-meta {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -75,45 +99,6 @@
         color: #333;
     }
 
-    .order-status {
-        display: inline-block;
-        padding: 0.5rem 1rem;
-        border-radius: 20px;
-        font-weight: 600;
-        font-size: 0.9rem;
-    }
-
-    /* Цвета статусов */
-    .status-processing {
-        color: #1a73e8;
-        background-color: #e8f0fe;
-    }
-
-    .status-cooking {
-        color: #fbbc04;
-        background-color: #fff8e6;
-    }
-
-    .status-ready {
-        color: #34a853;
-        background-color: #e6f4ea;
-    }
-
-    .status-canceled {
-        color: #d93025;
-        background-color: #fce8e6;
-    }
-
-    .status-delivered {
-        color: #34a853;
-        background-color: #e6f4ea;
-    }
-
-    .status-received {
-        color: #34a853;
-        background-color: #e6f4ea;
-    }
-
     .order-items {
         margin-top: 1.5rem;
     }
@@ -125,11 +110,6 @@
         margin-bottom: 1rem;
         background: #fafafa;
         border-radius: 8px;
-        transition: background 0.2s;
-    }
-
-    .order-item:hover {
-        background: #f5f5f5;
     }
 
     .item-image {
@@ -174,43 +154,6 @@
         margin-bottom: 0.3rem;
     }
 
-    .order-actions {
-        display: flex;
-        justify-content: flex-end;
-        gap: 1rem;
-        margin-top: 1.5rem;
-        padding-top: 1.5rem;
-        border-top: 1px solid #f0f0f0;
-    }
-
-    .action-btn {
-        padding: 0.7rem 1.5rem;
-        border: none;
-        border-radius: 6px;
-        cursor: pointer;
-        font-size: 0.95rem;
-        font-weight: 500;
-        transition: all 0.2s;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-
-    .cancel-btn {
-        background: #fce8e6;
-        color: #d93025;
-    }
-
-    .cancel-btn:hover:not(:disabled) {
-        background: #f9d7d5;
-    }
-
-    .cancel-btn:disabled {
-        background: #f5f5f5;
-        color: #9e9e9e;
-        cursor: not-allowed;
-    }
-
     .empty-orders {
         text-align: center;
         padding: 3rem;
@@ -249,7 +192,6 @@
 
     .primary-btn:hover {
         background: #d62839;
-        text-decoration: none;
     }
 
     @media (max-width: 768px) {
@@ -267,26 +209,16 @@
             height: auto;
             max-height: 200px;
         }
-
-        .order-actions {
-            flex-direction: column;
-            gap: 0.8rem;
-        }
-
-        .action-btn, .primary-btn {
-            width: 100%;
-            justify-content: center;
-        }
     }
 </style>
 
 <section class="orders-section">
-    <h2 class="section-title">Мои заказы</h2>
+    <h2 class="section-title">История заказов</h2>
 
     <div class="orders-list">
         {% if orders %}
         {% for order in orders %}
-        <div class="order-card" data-id="{{ order.id }}">
+        <div class="order-card">
             <div class="order-header">
                 <h3 class="order-title">Заказ <span class="order-id">#{{ order.id }}</span></h3>
                 <div class="order-status status-{{ order.status }}">
@@ -366,16 +298,6 @@
                 </div>
                 {% endfor %}
             </div>
-
-            <div class="order-actions">
-                {% if order.status not in ['canceled', 'delivered', 'received'] %}
-                <button class="action-btn cancel-btn"
-                        {% if order.status == 'canceled'%}disabled{% endif %}>
-                    <i class="fas fa-times"></i>
-                    {% if order.status == 'canceled' %}Отменен{% else %}Отменить заказ{% endif %}
-                </button>
-                {% endif %}
-            </div>
         </div>
         {% endfor %}
         {% else %}
@@ -383,7 +305,7 @@
             <div class="empty-icon">
                 <i class="fas fa-box-open"></i>
             </div>
-            <p class="empty-text">У вас пока нет активных заказов</p>
+            <p class="empty-text">Нет завершенных заказов</p>
             <a href="{{ url_for('mainPage.index') }}" class="primary-btn">
                 <i class="fas fa-utensils"></i> Вернуться в меню
             </a>
@@ -391,83 +313,4 @@
         {% endif %}
     </div>
 </section>
-
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        // Обработка отмены заказа
-        document.querySelectorAll('.cancel-btn:not(:disabled)').forEach(btn => {
-            btn.addEventListener('click', async function() {
-                if (!confirm('Вы действительно хотите отменить этот заказ?')) return;
-
-                const orderCard = this.closest('.order-card');
-                const orderId = orderCard.dataset.id;
-
-                // Блокируем кнопку на время выполнения запроса
-                this.disabled = true;
-                const originalText = this.innerHTML;
-                this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Обработка...';
-
-                try {
-                    const response = await fetch(`/orders/${orderId}/cancel`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]')?.content || ''
-                        }
-                    });
-
-                    if (!response.ok) {
-                        throw new Error('Ошибка при отмене заказа');
-                    }
-
-                    const data = await response.json();
-
-                    if (data.status === 'success') {
-                        // Обновляем статус заказа
-                        const statusElement = orderCard.querySelector('.order-status');
-                        statusElement.textContent = 'Отменен';
-                        statusElement.className = 'order-status status-canceled';
-
-                        // Перманентно отключаем кнопку
-                        this.disabled = true;
-                        this.innerHTML = '<i class="fas fa-times"></i> Отменен';
-
-                        // Показываем уведомление
-                        showAlert('Заказ успешно отменен', 'success');
-                    } else {
-                        throw new Error(data.message || 'Ошибка при отмене заказа');
-                    }
-                } catch (error) {
-                    console.error('Error:', error);
-                    showAlert(error.message || 'Произошла ошибка', 'error');
-                    this.disabled = false;
-                    this.innerHTML = originalText;
-                }
-            });
-        });
-
-        function showAlert(message, type = 'success') {
-            const alert = document.createElement('div');
-            alert.className = `alert alert-${type}`;
-            alert.style.position = 'fixed';
-            alert.style.top = '20px';
-            alert.style.right = '20px';
-            alert.style.padding = '1rem 1.5rem';
-            alert.style.borderRadius = '6px';
-            alert.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
-            alert.style.backgroundColor = type === 'success' ? '#34a853' : '#d93025';
-            alert.style.color = 'white';
-            alert.style.zIndex = '1000';
-            alert.style.animation = 'fadeIn 0.3s';
-            alert.textContent = message;
-
-            document.body.appendChild(alert);
-
-            setTimeout(() => {
-                alert.style.animation = 'fadeOut 0.3s';
-                setTimeout(() => alert.remove(), 300);
-            }, 3000);
-        }
-    });
-</script>
 {% endblock %}

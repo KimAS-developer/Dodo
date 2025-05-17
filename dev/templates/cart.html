@@ -272,23 +272,47 @@
         background: #d62839;
     }
 
-    /* Стили для пустой корзины */
+    /* Стили для пустой корзины - обновлены для соответствия с пустыми заказами */
     .empty-cart {
         text-align: center;
         padding: 3rem;
         background: #fff;
-        border-radius: 8px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
     }
 
-    .empty-cart img {
+    .empty-icon {
+        font-size: 3rem;
+        color: #e0e0e0;
         margin-bottom: 1.5rem;
     }
 
-    .empty-cart p {
-        font-size: 1.2rem;
+    .empty-text {
+        font-size: 1.3rem;
         color: #555;
         margin-bottom: 1.5rem;
+    }
+
+    .empty-cart .primary-btn {
+        padding: 1rem 2rem;
+        background: #e63946;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: background 0.2s;
+        width: auto; /* Убирает растяжение */
+        margin: 0 auto; /* Центрирование */
+    }
+
+    .empty-cart .primary-btn:hover {
+        background: #d62839;
     }
 
     /* Адаптивные стили */
@@ -375,10 +399,10 @@
 
                             {% if item.dough %}
                             <p>Тесто:
-                            {% if item.dough == 'traditional' %}Традиционное
-                            {% elif item.dough == 'thin' %}Тонкое
-                            {% else %}{{ item.dough|capitalize }}
-                            {% endif %}
+                                {% if item.dough == 'traditional' %}Традиционное
+                                {% elif item.dough == 'thin' %}Тонкое
+                                {% else %}{{ item.dough|capitalize }}
+                                {% endif %}
                             </p>
 
                             {% endif %}
@@ -471,8 +495,13 @@
         </div>
         {% else %}
         <div class="empty-cart">
-            <p>Ваша корзина пуста</p>
-            <a href="{{ url_for('mainPage.index') }}" class="primary-btn">Вернуться в меню</a>
+            <div class="empty-icon">
+                <i class="fas fa-shopping-cart"></i>
+            </div>
+            <p class="empty-text">Ваша корзина пуста</p>
+            <a href="{{ url_for('mainPage.index') }}" class="primary-btn">
+                <i class="fas fa-utensils"></i> Вернуться в меню
+            </a>
         </div>
         {% endif %}
     </div>
@@ -560,48 +589,53 @@
         }
 
         updateCartUI(response, cartItem) {
-    if (response.status === 'removed') {
-        cartItem.remove();
-    } else {
-        // Обновляем количество
-        const quantityElement = cartItem.querySelector('.quantity');
-        quantityElement.textContent = response.quantity;
+            if (response.status === 'removed') {
+                cartItem.remove();
+            } else {
+                // Обновляем количество
+                const quantityElement = cartItem.querySelector('.quantity');
+                quantityElement.textContent = response.quantity;
 
-        // Получаем цену за единицу из ответа или из data-атрибута
-        const unitPrice = response.price !== undefined ?
-            parseInt(response.price) :
-            parseInt(cartItem.dataset.unitPrice) || 0;
+                // Получаем цену за единицу из ответа или из data-атрибута
+                const unitPrice = response.price !== undefined ?
+                    parseInt(response.price) :
+                    parseInt(cartItem.dataset.unitPrice) || 0;
 
-        // Обновляем data-атрибут с ценой
-        cartItem.dataset.unitPrice = unitPrice;
+                // Обновляем data-атрибут с ценой
+                cartItem.dataset.unitPrice = unitPrice;
 
-        // Рассчитываем общую цену
-        const totalPrice = unitPrice * response.quantity;
+                // Рассчитываем общую цену
+                const totalPrice = unitPrice * response.quantity;
 
-        // Обновляем отображение
-        const priceTotal = cartItem.querySelector('.price-total');
-        const priceDetails = cartItem.querySelector('.price-details');
+                // Обновляем отображение
+                const priceTotal = cartItem.querySelector('.price-total');
+                const priceDetails = cartItem.querySelector('.price-details');
 
-        if (priceTotal) priceTotal.textContent = `${totalPrice} ₽`;
-        if (priceDetails) priceDetails.textContent = `(${unitPrice} ₽ × ${response.quantity})`;
-    }
-    this.updateTotalPrice();
-}
+                if (priceTotal) priceTotal.textContent = `${totalPrice} ₽`;
+                if (priceDetails) priceDetails.textContent = `(${unitPrice} ₽ × ${response.quantity})`;
+            }
+            this.updateTotalPrice();
+        }
 
         updateTotalPrice() {
-    let total = 0;
-    document.querySelectorAll('.price-total').forEach(el => {
-        const price = parseInt(el.textContent) || 0;
-        total += price;
-    });
-    document.getElementById('total-price').textContent = `${total} ₽`;
-}
+            let total = 0;
+            document.querySelectorAll('.price-total').forEach(el => {
+                const price = parseInt(el.textContent) || 0;
+                total += price;
+            });
+            document.getElementById('total-price').textContent = `${total} ₽`;
+        }
 
         showEmptyCart() {
             document.getElementById('cart-container').innerHTML = `
                 <div class="empty-cart">
-                    <p>Ваша корзина пуста</p>
-                    <a href="{{ url_for('mainPage.index') }}" class="primary-btn">Вернуться в меню</a>
+                    <div class="empty-icon">
+                        <i class="fas fa-shopping-cart"></i>
+                    </div>
+                    <p class="empty-text">Ваша корзина пуста</p>
+                    <a href="{{ url_for('mainPage.index') }}" class="primary-btn">
+                        <i class="fas fa-utensils"></i> Вернуться в меню
+                    </a>
                 </div>
             `;
         }
@@ -618,28 +652,28 @@
         }
 
         async handleCheckout() {
-    try {
-        const deliveryType = document.querySelector('input[name="delivery"]:checked').value;
-        const paymentMethod = document.querySelector('input[name="payment"]:checked').value;
-        const restaurantId = document.getElementById('restaurant').value;
-        const address = document.getElementById('address').value;
+            try {
+                const deliveryType = document.querySelector('input[name="delivery"]:checked').value;
+                const paymentMethod = document.querySelector('input[name="payment"]:checked').value;
+                const restaurantId = document.getElementById('restaurant').value;
+                const address = document.getElementById('address').value;
 
-        const data = {
-            delivery_type: deliveryType,
-            payment_method: paymentMethod,
-            restaurant_id: deliveryType === 'pickup' ? restaurantId : null,
-            address: deliveryType === 'delivery' ? address : null
-        };
+                const data = {
+                    delivery_type: deliveryType,
+                    payment_method: paymentMethod,
+                    restaurant_id: deliveryType === 'pickup' ? restaurantId : null,
+                    address: deliveryType === 'delivery' ? address : null
+                };
 
-        const response = await this.sendRequest('/api/cart/checkout', 'POST', data);
+                const response = await this.sendRequest('/api/cart/checkout', 'POST', data);
 
-        if (response.redirect) {
-            window.location.href = response.redirect;  // Проблема здесь - response.redirect содержит неверный endpoint
+                if (response.redirect) {
+                    window.location.href = response.redirect;
+                }
+            } catch (error) {
+                this.showError(error);
+            }
         }
-    } catch (error) {
-        this.showError(error);
-    }
-}
     }
 
     document.addEventListener('DOMContentLoaded', () => {

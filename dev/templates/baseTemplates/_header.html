@@ -10,17 +10,19 @@
             <!-- Кнопка входа/профиля справа -->
             <div class="text-end">
                 {% if current_user.is_authenticated %}
-                    {% if current_user.is_client() %}
-                        <a href="/orders" class="btn btn-outline-secondary me-2">Мои заказы</a>
-                        <a href="/cart" class="btn btn-outline-secondary me-2">Корзина</a>
-                        <a href="/profile" class="btn btn-outline-secondary me-2">Профиль</a>
-                        <a href="/logout" class="btn btn-outline-danger">Выйти</a>
-                    {% elif current_user.is_cook() %}
-                        <a href="/orders" class="btn btn-outline-secondary me-2">Заказы</a>
-                        <a href="/logout" class="btn btn-outline-danger">Выйти</a>
-                    {% endif %}
+                {% if current_user.is_client() %}
+                <a href="/orders" class="btn btn-outline-secondary me-2">Мои заказы</a>
+                <a href="/history" class="btn btn-outline-secondary me-2">История заказов</a>
+                <a href="/cart" class="btn btn-outline-secondary me-2">Корзина</a>
+                <a href="/profile" class="btn btn-outline-secondary me-2">Профиль</a>
+                <a href="/logout" class="btn btn-outline-danger">Выйти</a>
+                {% elif current_user.is_cook() %}
+                <a href="/orders" class="btn btn-outline-secondary me-2">Заказы</a>
+                <a href="/history" class="btn btn-outline-secondary me-2">История заказов</a>
+                <a href="/logout" class="btn btn-outline-danger">Выйти</a>
+                {% endif %}
                 {% else %}
-                    <a href="/auth" class="btn btn-outline-primary me-2">Войти</a>
+                <a href="/auth" class="btn btn-outline-primary me-2">Войти</a>
                 {% endif %}
             </div>
         </div>

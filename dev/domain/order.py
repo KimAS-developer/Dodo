@@ -79,10 +79,15 @@ class Order(db.Model):
             'processing': 'В обработке',
             'cooking': 'Готовится',
             'ready': 'Готово',
-            'canceled': 'Отменен',
-            'delivered': 'Доставлен'
+            'delivered': 'Доставлен',
+            'received': 'Получен',
+            'canceled': 'Отменен'
         }
         return statuses.get(self.status, self.status)
+
+    def get_final_status(self):
+        """Возвращает финальный статус в зависимости от типа доставки"""
+        return 'delivered' if self.delivery_type == 'delivery' else 'received'
 
     def get_delivery_type_display(self):
         """Отображаемое название типа доставки"""
